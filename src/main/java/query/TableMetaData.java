@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TableMetaData {
 
@@ -12,7 +14,7 @@ public class TableMetaData {
     String databaseName;
     String tableName ;
 
-    List<ColumnMetaData>  columns = new ArrayList<ColumnMetaData>();
+    Map<String,ColumnMetaData> columns = new HashMap<>();
 
     public String getClusterName() {
         return clusterName;
@@ -40,17 +42,16 @@ public class TableMetaData {
 
     public void addColumn(ColumnMetaData metadata)
     {
-        columns.add(metadata);
+        columns.put(metadata.getColumnName(), metadata);
     }
 
-    public List<ColumnMetaData> getColumns() {
+    public Map<String, ColumnMetaData> getColumns() {
         return columns;
     }
 
-    public void setColumns(List<ColumnMetaData> columns) {
+    public void setColumns(Map<String, ColumnMetaData> columns) {
         this.columns = columns;
     }
-
 
     public static void main(String[] args) {
 
