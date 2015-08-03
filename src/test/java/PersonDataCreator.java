@@ -51,12 +51,12 @@ public class PersonDataCreator {
 
     private int getAge()
     {
-        return getNextInt(1,99);
+        return getNextInt(1,98);
     }
 
     private int getIncome()
     {
-        return getNextInt(10000,1000000);
+        return getNextInt(10000,989000);
     }
 
     String[] states = {"CA","PA","NY","NJ", "MD", "DA","AL","HA","MD"};
@@ -67,7 +67,7 @@ public class PersonDataCreator {
 
     private String getZip() {
 
-        int zip = getNextInt(10000,99999);
+        int zip = getNextInt(10000,89999);
         return String.valueOf(zip);
     }
 

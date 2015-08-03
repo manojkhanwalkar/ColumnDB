@@ -7,6 +7,7 @@ import query.TableMetaData;
 
 import java.io.*;
 import java.util.Collection;
+import java.util.Iterator;
 
 public class CSVLoader {
 
@@ -38,6 +39,8 @@ public class CSVLoader {
     static ObjectMapper mapper = new ObjectMapper();
     TableMetaData tableMetaData=null;
 
+    String[] spaces;
+
     private void loadMetaData()
     {
         try {
@@ -49,8 +52,28 @@ public class CSVLoader {
 
             System.out.println(tableMetaData);
 
+            int maxSpaces =0;
 
-        } catch (IOException e) {
+            for (ColumnMetaData cmd :  tableMetaData.getColumns().values())
+            {
+                int len = cmd.getMaxSize();
+                if (len>maxSpaces) maxSpaces = len;
+
+            }
+
+            System.out.println("Max length is " + maxSpaces);
+
+            spaces = new String[maxSpaces];
+            String s1 = "";
+            for (int i=0;i<maxSpaces;i++)
+            {
+                spaces[i] = s1;
+                s1=s1+" ";
+            }
+
+
+
+            } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -100,7 +123,7 @@ public class CSVLoader {
                 }
                 for (int i=0;i<values.length;i++)
                 {
-                    writers[i].write(values[i]);  //TODO - adjust to size later
+                    writers[i].write(adjustLength(values[i],lengths[i]));
                 }
             }
 
@@ -115,6 +138,16 @@ public class CSVLoader {
         }
 
 
+    }
+
+    private String adjustLength(String s, int maxLength)
+    {
+        try {
+            return s + spaces[maxLength - s.length()];
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     //TODO - change code to go to end of file . might have to use different writer .
