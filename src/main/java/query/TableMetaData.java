@@ -49,6 +49,11 @@ public class TableMetaData {
         return columns;
     }
 
+    public  ColumnMetaData getColumnMetaData(String name) {
+        return columns.get(name);
+    }
+
+
     public void setColumns(Map<String, ColumnMetaData> columns) {
         this.columns = columns;
     }

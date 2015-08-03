@@ -1,6 +1,6 @@
 package query;
 
-class ColumnMetaData
+public class ColumnMetaData
 {
     String columnName ;
     int maxSize ;
