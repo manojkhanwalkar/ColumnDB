@@ -1,6 +1,10 @@
 package loader;
 
-import java.io.File;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import query.TableMetaData;
+
+import java.io.*;
 
 public class CSVLoader {
 
@@ -24,9 +28,34 @@ public class CSVLoader {
 
         loader.load();
 
+        loader.loadMetaData();
+
+    }
+
+    static ObjectMapper mapper = new ObjectMapper();
+
+    private void loadMetaData()
+    {
+        try {
+            FileReader reader = new FileReader(rootDirName+seperator+clusterName+seperator+databaseName+seperator+tableName+seperator+tableName+".meta");
+            BufferedReader metaFileReader = new BufferedReader(reader);
+            String s = metaFileReader.readLine();
+
+            TableMetaData tableMetaData = mapper.readValue(s,TableMetaData.class);
+
+            System.out.println(tableMetaData);
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     private void load() {
+
+        //TODO - move the dir creation part to the create data base and create table calls .
 
         File dir = new File(rootDirName+seperator+clusterName+seperator+databaseName+seperator+tableName);
         dir.mkdirs();

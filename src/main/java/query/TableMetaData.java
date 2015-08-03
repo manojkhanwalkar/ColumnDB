@@ -107,4 +107,13 @@ public class TableMetaData {
 
     }
 
+    @Override
+    public String toString() {
+        return "TableMetaData{" +
+                "clusterName='" + clusterName + '\'' +
+                ", databaseName='" + databaseName + '\'' +
+                ", tableName='" + tableName + '\'' +
+                ", columns=" + columns +
+                '}';
+    }
 }

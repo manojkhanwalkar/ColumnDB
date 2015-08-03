@@ -21,4 +21,12 @@ class ColumnMetaData
     public void setMaxSize(int maxSize) {
         this.maxSize = maxSize;
     }
+
+    @Override
+    public String toString() {
+        return "ColumnMetaData{" +
+                "columnName='" + columnName + '\'' +
+                ", maxSize=" + maxSize +
+                '}';
+    }
 }
