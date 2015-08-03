@@ -30,6 +30,8 @@ public class CSVLoader {
 
         File dir = new File(rootDirName+seperator+clusterName+seperator+databaseName+seperator+tableName);
         dir.mkdirs();
+
+        //TODO - load person.meta and use that to create the columnar files .
     }
 
 
