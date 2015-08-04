@@ -37,7 +37,7 @@
 
     <bean id="RestService" class="graphdb.RestService">
         <property name="name" value="RestService" />
-        <property name="restConfigName" value="/Users/mkhanwalkar/GraphDB/src/main/java/rest/configuration1.yml" />
+        <property name="restConfigName" value="/Users/mkhanwalkar/ColumnDB/src/main/java/rest/configuration1.yml" />
 
     </bean> -->
 
