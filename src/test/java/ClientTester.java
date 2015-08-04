@@ -1,17 +1,11 @@
 import client.ColumnDBClient;
 import org.codehaus.jackson.map.ObjectMapper;
 import query.*;
-import server.Server;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
 public class ClientTester {
 
 
+    static ObjectMapper mapper = new ObjectMapper();
 
     public static void main(String[] args)  throws Exception {
 
@@ -173,13 +167,11 @@ public class ClientTester {
             System.out.println(response); */
 
             MetaResponse metaResponse = client.query(clusterName);
-            System.out.println(metaResponse);
+
+            System.out.println(mapper.writeValueAsString(metaResponse));
 
 
         }
-
-
-        //  }
 
 
 
