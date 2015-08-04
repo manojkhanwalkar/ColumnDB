@@ -119,7 +119,7 @@ public class ClientTester {
             meta.setType(MetaRequestType.CreateTable);
 
             TableMetaData tableMetaData = new TableMetaData();
-            tableMetaData.setClusterName("cluster1");
+            tableMetaData.setClusterName("cluster2");
             tableMetaData.setDatabaseName("demo");
             tableMetaData.setTableName("person");
 
@@ -163,10 +163,10 @@ public class ClientTester {
             meta.setMetaData(tableMetaData);
 
 
-      /*      Response response = client.send(clusterName, meta);
-            System.out.println(response); */
+            Response response = client.send(clusterName1, meta);
+            System.out.println(response);
 
-            MetaResponse metaResponse = client.query(clusterName);
+            MetaResponse metaResponse = client.query(clusterName1);
 
             System.out.println(mapper.writeValueAsString(metaResponse));
 
