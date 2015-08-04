@@ -21,4 +21,13 @@ public class MetaRequest {
     public void setMetaData(TableMetaData metaData) {
         this.metaData = metaData;
     }
+
+
+    @Override
+    public String toString() {
+        return "MetaRequest{" +
+                "type=" + type +
+                ", metaData=" + metaData +
+                '}';
+    }
 }

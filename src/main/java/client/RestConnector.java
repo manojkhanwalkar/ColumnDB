@@ -5,6 +5,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import query.MetaRequest;
 import query.Request;
 import query.Response;
 
@@ -59,6 +60,15 @@ public class RestConnector  {
 
         return response1.getBody();
     }
+
+    public Response send(MetaRequest request)
+    {
+        HttpEntity<MetaRequest> requestEntity = new HttpEntity<>(request);
+        ResponseEntity<Response> response1 = restTemplate.exchange("http://" + host + ":" + port +  "/columndb/meta", HttpMethod.POST, requestEntity, Response.class);
+
+        return response1.getBody();
+    }
+
 
 /*
     public void send(RequestFutureTask task)

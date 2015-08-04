@@ -1,7 +1,6 @@
 import client.ColumnDBClient;
 import org.codehaus.jackson.map.ObjectMapper;
-import query.Request;
-import query.Response;
+import query.*;
 import server.Server;
 
 import java.io.BufferedReader;
@@ -122,8 +121,55 @@ public class ClientTester {
             });*/
         {
 
-            Request relation = new Request();
-            Response response = client.send(clusterName, relation);
+            MetaRequest meta = new MetaRequest();
+            meta.setType(MetaRequestType.CreateTable);
+
+            TableMetaData tableMetaData = new TableMetaData();
+            tableMetaData.setClusterName("cluster1");
+            tableMetaData.setDatabaseName("demo");
+            tableMetaData.setTableName("person");
+
+            //age,gender,zip,income,state
+            {
+                ColumnMetaData metadata = new ColumnMetaData();
+                metadata.setColumnName("age");
+                metadata.setMaxSize(2);
+                tableMetaData.addColumn(metadata);
+
+            }
+            {
+                ColumnMetaData metadata = new ColumnMetaData();
+                metadata.setColumnName("gender");
+                metadata.setMaxSize(1);
+                tableMetaData.addColumn(metadata);
+
+            }
+            {
+                ColumnMetaData metadata = new ColumnMetaData();
+                metadata.setColumnName("zip");
+                metadata.setMaxSize(5);
+                tableMetaData.addColumn(metadata);
+
+            }
+            {
+                ColumnMetaData metadata = new ColumnMetaData();
+                metadata.setColumnName("income");
+                metadata.setMaxSize(7);
+                tableMetaData.addColumn(metadata);
+
+            }
+            {
+                ColumnMetaData metadata = new ColumnMetaData();
+                metadata.setColumnName("state");
+                metadata.setMaxSize(2);
+                tableMetaData.addColumn(metadata);
+
+            }
+
+            meta.setMetaData(tableMetaData);
+
+
+            Response response = client.send(clusterName, meta);
             System.out.println(response);
 
         }

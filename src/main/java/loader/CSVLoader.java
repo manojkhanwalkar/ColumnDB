@@ -84,19 +84,7 @@ public class CSVLoader {
 
     /*    //TODO - move the dir and file creation part to the create data base and create table calls .
 
-        File dir = new File(rootDirName+seperator+clusterName+seperator+databaseName+seperator+tableName);
-        dir.mkdirs();
 
-        tableMetaData.getColumns().values().stream().forEach(cmd->{
-
-
-            File file = new File(dir+seperator+cmd.getColumnName());
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
         */
 
         // read file for columns , get maxsize from metadata .

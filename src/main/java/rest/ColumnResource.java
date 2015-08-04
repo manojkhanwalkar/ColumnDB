@@ -1,7 +1,10 @@
 package rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import query.MetaRequest;
 import query.Request;
 import query.Response;
+import query.TableMetaData;
 import server.Server;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +14,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import java.io.*;
 
 @Path("/columndb")
 @Produces(MediaType.APPLICATION_JSON)
@@ -28,39 +32,66 @@ public class ColumnResource {
         final Boolean enableRestEndPoint = (Boolean) ApiConfig.INSTANCE.getValue(ApiConfig.ENABLE_MATCH_DEVICE);
   */
 
+    static final String seperator = "/";
+    static final String rootDirName = "/tmp";
+
+    static ObjectMapper mapper = new ObjectMapper();
+
+
+
+    @Path("/meta")
     @POST
-    public Response createTable(@Context HttpServletRequest hsReq, @Valid Request request) {
+    public Response createTable(@Context HttpServletRequest hsReq, @Valid MetaRequest request) {
 
 
        // GraphDB db = ((DBService) Server.getService("DBService")).getDatabase(request.getDbName());
         Response response=null;
 
-    /*    switch (request.getOperation())
+        System.out.println(request);
+
+        switch (request.getType())
         {
-            case Query:
-              response   = db.query(request);
+            case CreateTable:
+
+                TableMetaData tableMetaData = request.getMetaData();
+
+                String clusterName= tableMetaData.getClusterName();
+                String databaseName = tableMetaData.getDatabaseName();
+                String tableName = tableMetaData.getTableName();
+
+                File dir = new File(rootDirName+seperator+clusterName+seperator+databaseName+seperator+tableName);
+                dir.mkdirs();
+
+                tableMetaData.getColumns().values().stream().forEach(cmd->{
+
+
+                    File file = new File(dir+seperator+cmd.getColumnName());
+                    try {
+                        file.createNewFile();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+
+                try {
+                    String s = mapper.writeValueAsString(tableMetaData);
+
+                    FileWriter writer = new FileWriter(rootDirName+seperator+clusterName+seperator+databaseName+seperator+tableName+seperator+tableName+".meta");
+                    BufferedWriter metaFileWriter = new BufferedWriter(writer);
+                    metaFileWriter.write(s);
+                    metaFileWriter.flush();
+                    metaFileWriter.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+                // response   = db.query(request);
               break ;
-            case AddNode:
-                Node n = db.createOrGetNode(request.getId());
-                response = new Response();
-                response.setNode(n);
-                break;
-            case AddRelation: {
-                Node n1 = db.createOrGetNode(request.getId());
-                Node n2 = db.createOrGetNode(request.getTgtId());
-                db.addRelationship(n1, n2);
-                break;
-            }
-            case DeleteRelation: {
-                db.deleteRelationship(request.getId(), request.getTgtId());
-                break;
-            }
-            case DeleteNode:
-                db.deleteNode(request.getId());
             default :
                 response = null;
 
-        }*/
+        }
 
 
         return response;

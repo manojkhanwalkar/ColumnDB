@@ -1,5 +1,6 @@
 package client;
 
+import query.MetaRequest;
 import query.Request;
 import query.Response;
 
@@ -40,7 +41,8 @@ public class ColumnDBClient {
     }
 
 
-    public Response send(String clusterName , Request request) {
+
+    private RestConnector getConnector(String clusterName) {
 
         Map<String,RestConnector> connectors = localConnector.get();
         if (connectors==null)
@@ -58,10 +60,29 @@ public class ColumnDBClient {
 
         }
 
+        return connector;
+
+    }
+
+
+
+
+
+    public Response send(String clusterName , Request request) {
+
+        RestConnector connector = getConnector(clusterName);
+
         return connector.send(request);
 
     }
 
+    public Response send(String clusterName , MetaRequest request) {
+
+        RestConnector connector = getConnector(clusterName);
+
+        return connector.send(request);
+
+    }
 
 
 
