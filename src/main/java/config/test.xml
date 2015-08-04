@@ -10,16 +10,16 @@
     <bean id="ServiceList" class="server.ServiceList">
         <property name="listServices">
             <list>
-   <!--             <ref bean="DBService" />
+               <ref bean="DBService" />
                 <ref bean="RestService" />
-                <ref bean="DBQueryTest" /> -->
+   <!--             <ref bean="DBQueryTest" /> -->
             </list>
         </property>
 
     </bean>
 
- <!--   <bean id="DBService" class="graphdb.DBService">
-        <property name="location" value="/tmp/" />
+   <bean id="DBService" class="columndb.DBService">
+  <!--      <property name="location" value="/tmp/" />
         <property name="dbNames">
             <list>
                 <value>db1</value>
@@ -28,19 +28,16 @@
         </property>
         <property name="name" value="DBService" />
         <property name="clusterName" value="cluster1" />
-        <property name="snapShotInterval" value="5000" />
+        <property name="snapShotInterval" value="5000" /> -->
 
     </bean>
 
-    <bean id="DBQueryTest" class="graphdb.DBClientService">
-        <property name="name" value="DBQueryTest" />
-    </bean>
 
-    <bean id="RestService" class="graphdb.RestService">
+    <bean id="RestService" class="columndb.RestService">
         <property name="name" value="RestService" />
         <property name="restConfigName" value="/Users/mkhanwalkar/ColumnDB/src/main/java/rest/configuration.yml" />
 
-    </bean> -->
+    </bean>
 
 
 </beans>
