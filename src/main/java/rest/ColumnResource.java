@@ -1,14 +1,12 @@
 package rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import query.MetaRequest;
-import query.Request;
-import query.Response;
-import query.TableMetaData;
+import query.*;
 import server.Server;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -36,6 +34,15 @@ public class ColumnResource {
     static final String rootDirName = "/tmp";
 
     static ObjectMapper mapper = new ObjectMapper();
+
+    @Path("/metaquery")
+    @POST
+    public MetaResponse query(@Context HttpServletRequest hsReq, @Valid String request) {
+
+        System.out.println(request);
+        return null;
+
+    }
 
 
 

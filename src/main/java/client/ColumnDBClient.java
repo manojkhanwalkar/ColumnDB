@@ -1,6 +1,7 @@
 package client;
 
 import query.MetaRequest;
+import query.MetaResponse;
 import query.Request;
 import query.Response;
 
@@ -15,6 +16,7 @@ public class ColumnDBClient {
     {
 
     }
+
 
     static class Holder
     {
@@ -83,6 +85,15 @@ public class ColumnDBClient {
         return connector.send(request);
 
     }
+
+    public MetaResponse query(String clusterName) {
+
+        RestConnector connector = getConnector(clusterName);
+        return connector.query(clusterName);
+
+
+    }
+
 
 
 

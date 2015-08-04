@@ -6,6 +6,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import query.MetaRequest;
+import query.MetaResponse;
 import query.Request;
 import query.Response;
 
@@ -65,6 +66,13 @@ public class RestConnector  {
     {
         HttpEntity<MetaRequest> requestEntity = new HttpEntity<>(request);
         ResponseEntity<Response> response1 = restTemplate.exchange("http://" + host + ":" + port +  "/columndb/meta", HttpMethod.POST, requestEntity, Response.class);
+
+        return response1.getBody();
+    }
+
+    public MetaResponse query(String clusterName) {
+        HttpEntity<String> requestEntity = new HttpEntity<>(clusterName);
+        ResponseEntity<MetaResponse> response1 = restTemplate.exchange("http://" + host + ":" + port +  "/columndb/metaquery", HttpMethod.POST, requestEntity, MetaResponse.class);
 
         return response1.getBody();
     }

@@ -169,8 +169,12 @@ public class ClientTester {
             meta.setMetaData(tableMetaData);
 
 
-            Response response = client.send(clusterName, meta);
-            System.out.println(response);
+      /*      Response response = client.send(clusterName, meta);
+            System.out.println(response); */
+
+            MetaResponse metaResponse = client.query(clusterName);
+            System.out.println(metaResponse);
+
 
         }
 
