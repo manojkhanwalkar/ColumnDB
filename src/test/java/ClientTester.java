@@ -1,0 +1,138 @@
+import client.ColumnDBClient;
+import org.codehaus.jackson.map.ObjectMapper;
+import query.Request;
+import query.Response;
+import server.Server;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
+public class ClientTester {
+
+
+
+    public static void main(String[] args)  throws Exception {
+
+        String clusterName = "cluster1";
+        String clusterName1 = "cluster2";
+
+ /*       for (int j=0;j<1;j++) {
+
+            Thread t = new Thread(()-> {
+
+
+            for (int i = 0; i < 1; i++) {
+                GraphDBClient client = GraphDBClient.getInstance();
+                Request request = new Request();
+                request.setId("DP5");
+                request.setOperation(DBOperation.Query);
+                request.setDbName("db2");
+
+                //  ObjectMapper mapper = new ObjectMapper();
+
+                // String s = mapper.writeValueAsString(request);
+
+                //System.out.println(s);
+
+//
+                Response response = client.send(request);
+
+                System.out.println(response);
+            }
+            });
+
+            t.start();
+
+        }*/
+
+        // GraphDB db = ((DBService) Server.getService("DBService")).getDatabase("db1");
+        ColumnDBClient client = ColumnDBClient.getInstance();
+
+        client.addCluster(clusterName,10005);
+        client.addCluster(clusterName,"localhost");
+        client.addCluster(clusterName1,10015);
+        client.addCluster(clusterName1,"localhost");
+
+   /*     Set<String> ids = new HashSet<>();
+
+
+        for (int j=0;j<1;j++) {
+
+            String clusterToUse ;
+            if (j%2==0)
+                clusterToUse = clusterName;
+            else
+                clusterToUse = clusterName1;
+
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader("/Users/mkhanwalkar/test/data/input.txt"));
+
+                String s = null;
+                while ((s = reader.readLine()) != null) {
+                    //  System.out.println(s);
+                    String[] sA = s.split(",");
+
+                    Request request = new Request();
+                    request.setId(sA[0]);
+                    ids.add(sA[0]);
+                    // request.setName(sA[0]);
+                    request.setOperation(DBOperation.AddNode);
+                    request.setDbName("db1");
+                    Response response = client.send(clusterToUse, request);
+                    System.out.println(response);
+
+                    for (int i = 1; i < sA.length; i++) {
+                        //                 Node child = db.createOrGetNode( sA[i]);
+                        Request child = new Request();
+                        child.setId(sA[i]);
+                        ids.add(sA[i]);
+                        // child.setName(sA[i]);
+                        child.setOperation(DBOperation.AddNode);
+                        child.setDbName("db1");
+                        response = client.send(clusterToUse, child);
+                        System.out.println(response);
+
+                        Request relation = new Request();
+                        relation.setId(sA[0]);
+                        relation.setTgtId(sA[i]);
+                        relation.setOperation(DBOperation.AddRelation);
+                        relation.setDbName("db1");
+                        response = client.send(clusterToUse, relation);
+                        System.out.println(response);
+
+                    }
+
+
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }*/
+
+         /*   ids.stream().forEach(s->{
+                Request child = new Request();
+                child.setId(s);
+                child.setOperation(DBOperation.DeleteNode);
+                child.setDbName("db1");
+                client.send(clusterToUse, child);
+
+            });*/
+        {
+
+            Request relation = new Request();
+            Response response = client.send(clusterName, relation);
+            System.out.println(response);
+
+        }
+
+
+        //  }
+
+
+
+    }
+
+}

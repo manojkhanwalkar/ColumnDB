@@ -55,7 +55,7 @@ public class RestConnector  {
     public Response send(Request request)
     {
         HttpEntity<Request> requestEntity = new HttpEntity<>(request);
-        ResponseEntity<Response> response1 = restTemplate.exchange("http://" + host + ":" + port +  "/graphdb", HttpMethod.POST, requestEntity, Response.class);
+        ResponseEntity<Response> response1 = restTemplate.exchange("http://" + host + ":" + port +  "/columndb", HttpMethod.POST, requestEntity, Response.class);
 
         return response1.getBody();
     }

@@ -1,5 +1,7 @@
 package rest;
 
+import query.Request;
+import query.Response;
 import server.Server;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,7 +12,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-@Path("/graphdb")
+@Path("/columndb")
 @Produces(MediaType.APPLICATION_JSON)
 public class ColumnResource {
 
@@ -26,14 +28,14 @@ public class ColumnResource {
         final Boolean enableRestEndPoint = (Boolean) ApiConfig.INSTANCE.getValue(ApiConfig.ENABLE_MATCH_DEVICE);
   */
 
-  /*  @POST
-    public Response sayHello(@Context HttpServletRequest hsReq, @Valid Request request) {
+    @POST
+    public Response createTable(@Context HttpServletRequest hsReq, @Valid Request request) {
 
 
-        GraphDB db = ((DBService) Server.getService("DBService")).getDatabase(request.getDbName());
+       // GraphDB db = ((DBService) Server.getService("DBService")).getDatabase(request.getDbName());
         Response response=null;
 
-        switch (request.getOperation())
+    /*    switch (request.getOperation())
         {
             case Query:
               response   = db.query(request);
@@ -58,9 +60,9 @@ public class ColumnResource {
             default :
                 response = null;
 
-        }
+        }*/
 
 
         return response;
-    }*/
+    }
 }
