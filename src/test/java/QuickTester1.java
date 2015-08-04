@@ -31,6 +31,8 @@ public class QuickTester1 {
         checkCondition("income", "700000", ConditionType.LT);
         size = 1;
         checkCondition("gender", "F", ConditionType.EQ);
+        size=2;
+        checkCondition("state", "NY,NJ,CA,MD", ConditionType.IN);
         printMatchCount();
 
     }
@@ -79,7 +81,7 @@ public class QuickTester1 {
                 int rhs = Integer.parseInt(s1.trim());
                 if (lhs > rhs)
                 {
-                    positions[count] = 1;
+                   // positions[count] = 1;
                 }
                 else
                 {
@@ -94,7 +96,7 @@ public class QuickTester1 {
                 int rhs = Integer.parseInt(s1.trim());
                 if (lhs < rhs)
                 {
-                    positions[count] = 1;
+                  //  positions[count] = 1;
                 }
                 else
                 {
@@ -107,12 +109,27 @@ public class QuickTester1 {
             {
                 if (s.trim().equals(s1))
                 {
-                    positions[count] = 1;
+                  //  positions[count] = 1;
                 }
                 else
                 {
                     positions[count] = 0;
                 }
+                break;
+
+            }
+            case IN :
+            {
+                String [] sA = s1.split(",");
+                s = s.trim();
+                for (int i=0;i<sA.length;i++)
+                {
+                    if (s.equals(sA[i]))
+                        return ;
+
+                }
+
+                positions[count] = 0;
                 break;
 
             }
