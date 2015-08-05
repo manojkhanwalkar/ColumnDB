@@ -171,18 +171,29 @@ public class ClientTester {
             System.out.println(mapper.writeValueAsString(metaResponse));*/
 
             CountRequest countRequest = new CountRequest();
-            countRequest.setClusterName("cluster2");
+            countRequest.setClusterName("cluster1");
             countRequest.setDatabaseName("demo");
             countRequest.setTableName("person");
 
-            Criteria criteria = new Criteria();
-            criteria.setColumnName("age");
-            criteria.setType(ConditionType.GT);
-            criteria.setRhs("25");
+            {
+                Criteria criteria = new Criteria();
+                criteria.setColumnName("age");
+                criteria.setType(ConditionType.GT);
+                criteria.setRhs("25");
 
-            countRequest.addCriteria(criteria);
+                countRequest.addCriteria(criteria);
+            }
+            {
+                Criteria criteria = new Criteria();
+                criteria.setColumnName("gender");
+                criteria.setType(ConditionType.EQ);
+                criteria.setRhs("M");
 
-            Response response = client.query(clusterName1,countRequest);
+                countRequest.addCriteria(criteria);
+
+            }
+
+            Response response = client.query(clusterName,countRequest);
 
             System.out.println(response.getResult());
 

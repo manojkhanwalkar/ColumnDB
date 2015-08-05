@@ -40,9 +40,9 @@ public class ColumnResource {
     @POST
     public Response query(@Context HttpServletRequest hsReq, @Valid CountRequest request) {
 
-        Response metaResponse = new Response();
+        CountProcessor processor = new CountProcessor(request);
 
-        metaResponse.setResult("Work in Progress");
+        Response metaResponse = processor.process();
 
         return metaResponse;
 
