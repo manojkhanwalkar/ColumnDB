@@ -163,12 +163,28 @@ public class ClientTester {
             meta.setMetaData(tableMetaData);
 
 
-            Response response = client.send(clusterName1, meta);
+         /*   Response response = client.send(clusterName1, meta);
             System.out.println(response);
 
             MetaResponse metaResponse = client.query(clusterName1);
 
-            System.out.println(mapper.writeValueAsString(metaResponse));
+            System.out.println(mapper.writeValueAsString(metaResponse));*/
+
+            CountRequest countRequest = new CountRequest();
+            countRequest.setClusterName("cluster2");
+            countRequest.setDatabaseName("demo");
+            countRequest.setTableName("person");
+
+            Criteria criteria = new Criteria();
+            criteria.setColumnName("age");
+            criteria.setType(ConditionType.GT);
+            criteria.setRhs("25");
+
+            countRequest.addCriteria(criteria);
+
+            Response response = client.query(clusterName1,countRequest);
+
+            System.out.println(response.getResult());
 
 
         }

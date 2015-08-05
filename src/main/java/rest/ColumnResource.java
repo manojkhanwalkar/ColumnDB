@@ -36,6 +36,19 @@ public class ColumnResource {
 
     static ObjectMapper mapper = new ObjectMapper();
 
+    @Path("/countquery")
+    @POST
+    public Response query(@Context HttpServletRequest hsReq, @Valid CountRequest request) {
+
+        Response metaResponse = new Response();
+
+        metaResponse.setResult("Work in Progress");
+
+        return metaResponse;
+
+    }
+
+
     @Path("/metaquery")
     @POST
     public MetaResponse query(@Context HttpServletRequest hsReq, @Valid String clusterName) {

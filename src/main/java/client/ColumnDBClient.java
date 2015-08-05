@@ -1,9 +1,6 @@
 package client;
 
-import query.MetaRequest;
-import query.MetaResponse;
-import query.Request;
-import query.Response;
+import query.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -91,6 +88,14 @@ public class ColumnDBClient {
         RestConnector connector = getConnector(clusterName);
         return connector.query(clusterName);
 
+
+    }
+
+    public Response query(String clusterName , CountRequest request) {
+
+        RestConnector connector = getConnector(clusterName);
+
+        return connector.query(request);
 
     }
 

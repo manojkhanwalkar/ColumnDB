@@ -3,13 +3,13 @@ package query;
 
 public class Response {
 
-    String test;
+    String result;
 
-    public String getTest() {
-        return test;
+    public String getResult() {
+        return result;
     }
 
-    public void setTest(String test) {
-        this.test = test;
+    public void setResult(String result) {
+        this.result = result;
     }
 }

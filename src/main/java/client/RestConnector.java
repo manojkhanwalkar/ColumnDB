@@ -5,10 +5,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-import query.MetaRequest;
-import query.MetaResponse;
-import query.Request;
-import query.Response;
+import query.*;
 
 public class RestConnector  {
 
@@ -17,11 +14,6 @@ public class RestConnector  {
 
     RestTemplate restTemplate ;
 
-   /* public RestConnector()
-    {
-        this.port = 10005;
-        this.host = "localhost" ;
-    }*/
 
 
     public RestConnector(String host, int port)
@@ -77,6 +69,12 @@ public class RestConnector  {
         return response1.getBody();
     }
 
+    public Response query(CountRequest request) {
+        HttpEntity<CountRequest> requestEntity = new HttpEntity<>(request);
+        ResponseEntity<Response> response1 = restTemplate.exchange("http://" + host + ":" + port +  "/columndb/countquery", HttpMethod.POST, requestEntity, Response.class);
+
+        return response1.getBody();
+    }
 
 /*
     public void send(RequestFutureTask task)
