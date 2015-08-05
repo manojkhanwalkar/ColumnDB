@@ -17,7 +17,7 @@ public class CountProcessor {
     String dataBaseName ;
     String tableName ;
 
-    static int numRecords=100; //TODO - this value needs to be updated in the metadata .
+     int numRecords=100; //TODO - this value needs to be updated in the metadata .
 
     CountRequest request;
 
@@ -168,13 +168,14 @@ public class CountProcessor {
 
     }
 
-    private  StringBuilder readFile(String name) {
+    private  StringBuilder readFile( String name) {
 
         try {
             FileReader reader = new FileReader(name);
             BufferedReader metaFileReader = new BufferedReader(reader);
             String s=  metaFileReader.readLine();
             metaFileReader.close();
+
             return new StringBuilder(s);
         } catch (IOException e) {
             e.printStackTrace();
