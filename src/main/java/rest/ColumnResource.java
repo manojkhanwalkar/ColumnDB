@@ -3,11 +3,9 @@ package rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import query.*;
-import server.Server;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -40,13 +38,28 @@ public class ColumnResource {
     @POST
     public Response query(@Context HttpServletRequest hsReq, @Valid CountRequest request) {
 
-        CountProcessor processor = new CountProcessor(request);
+        CountNDataProcessor processor = new CountNDataProcessor(request);
 
-        Response metaResponse = processor.process();
+        Response metaResponse = processor.processCount();
 
         return metaResponse;
 
     }
+
+    @Path("/dataquery")
+    @POST
+    public DataResponse dataquery(@Context HttpServletRequest hsReq, @Valid CountRequest request) {
+
+        CountNDataProcessor processor = new CountNDataProcessor(request);
+
+         DataResponse metaResponse = processor.processData();
+
+
+
+        return metaResponse;
+
+    }
+
 
 
     @Path("/metaquery")

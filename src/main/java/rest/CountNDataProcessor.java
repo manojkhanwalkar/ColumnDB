@@ -6,8 +6,10 @@ import query.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class CountProcessor {
+public class CountNDataProcessor {
 
     static final String seperator = "/";
     static final String rootDirName = "/tmp";  //TODO - pick from config
@@ -25,7 +27,7 @@ public class CountProcessor {
 
     // for now number of records is hardcoded .
 
-    public CountProcessor(CountRequest request)
+    public CountNDataProcessor(CountRequest request)
     {
         this.clusterName = request.getClusterName();
         this.dataBaseName = request.getDatabaseName();
@@ -39,7 +41,39 @@ public class CountProcessor {
      int[] positions ;
 
 
-    public Response process() {
+    public DataResponse processData()
+    {
+        DataResponse response = new DataResponse();
+        processCount();  // gets the positions .
+        // for each column , read file , check data against positions and create a list of column results .
+
+        tableMetaData.getColumns().values().stream().forEach(col->{
+
+            StringBuilder data = readFile(rootDirName+seperator+clusterName+seperator+dataBaseName+seperator+tableName+seperator+col.getColumnName());
+            int size = col.getMaxSize();
+            List<String> colResults = new ArrayList<String>();
+            for (int i=0;i<positions.length;i++)
+            {
+                if (positions[i]==0)
+                    continue;
+
+                int start = i*size;
+                String s = data.substring(start,start+size);
+
+                colResults.add(s);
+
+            }
+
+            response.addValues(col.getColumnName(),colResults);
+
+
+        });
+
+        return response;
+    }
+
+
+    public Response processCount() {
 
         Response response = new Response();
 

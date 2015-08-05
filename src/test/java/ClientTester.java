@@ -197,6 +197,8 @@ public class ClientTester {
 
             System.out.println(response.getResult());
 
+            DataResponse response1 = client.queryData(clusterName,countRequest);
+            System.out.println(response1.getValues());
 
         }
 

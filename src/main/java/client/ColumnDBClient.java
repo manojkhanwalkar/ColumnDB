@@ -99,6 +99,13 @@ public class ColumnDBClient {
 
     }
 
+    public DataResponse queryData(String clusterName , CountRequest request) {
+
+        RestConnector connector = getConnector(clusterName);
+
+        return connector.queryData(request);
+
+    }
 
 
 

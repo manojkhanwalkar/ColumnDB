@@ -76,6 +76,14 @@ public class RestConnector  {
         return response1.getBody();
     }
 
+    public DataResponse queryData(CountRequest request) {
+        HttpEntity<CountRequest> requestEntity = new HttpEntity<>(request);
+        ResponseEntity<DataResponse> response1 = restTemplate.exchange("http://" + host + ":" + port +  "/columndb/dataquery", HttpMethod.POST, requestEntity, DataResponse.class);
+
+        return response1.getBody();
+    }
+
+
 /*
     public void send(RequestFutureTask task)
     {
