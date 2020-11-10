@@ -13,6 +13,10 @@ The entire cluster can be reset by deleting the underlying files.
 
 Two examples are provided here - A person with various attributes and a marketing campaign. 
 
+Setup : 
+Define the rootDir in the yml files to point to the directory where the servers will store their data.
+The directory structure below is directories corresponding to list of databases and within each database are directories corresponding to the tables in the database. 
+The table directory in turn will contain one file per column defined in the table metadata.
 Usage : 
 
 Server is the main class. 

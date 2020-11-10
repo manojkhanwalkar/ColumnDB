@@ -53,61 +53,20 @@ public class DBService implements Service {
         this.dbNames = dbNames;
     }
 
-  //  Map<String,GraphDB> databases = new HashMap<>();
-
-    /*public Map<String, GraphDB> getDatabases() {
-        return databases;
-    }*/
-
- /*   public void setDatabases(Map<String, GraphDB> databases) {
-        this.databases = databases;
-    }*/
-
-    ScheduledExecutorService scheduledPool = Executors.newScheduledThreadPool(1);
 
 
     @Override
     public void init() {
 
-  /*      for (String name : dbNames) {
 
-            GraphDB db = GraphDbFactory.getInstance().createDB(location,clusterName,name);
-
-            db.restore();
-
-            databases.put(name,db);
-        }
-
-        scheduledPool.scheduleWithFixedDelay(() -> {
-            System.out.println("Hello World");
-            databases.values().forEach(graphdb.GraphDB::snapshot);
-
-        }, snapShotInterval, snapShotInterval, TimeUnit.SECONDS); */
 
     }
-
- /*   public GraphDB getDatabase(String name)
-    {
-        return databases.get(name);
-    } */
-
 
 
 
     @Override
     public void destroy() {
 
- /*       try {
-            scheduledPool.shutdown();
-            scheduledPool.awaitTermination(1,TimeUnit.HOURS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        for (GraphDB db : databases.values())
-            db.save();
-
-*/
 
 
     }

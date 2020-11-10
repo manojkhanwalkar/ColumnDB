@@ -26,7 +26,8 @@ public class ColumnApplication extends Application<ExampleServiceConfiguration> 
                     Environment environment) {
         // nothing to do yet
 
-        final ColumnResource resource = new ColumnResource();
+
+        final ColumnResource resource = new ColumnResource(configuration.getMessages().getRootDir());
         environment.jersey().register(resource);
     }
 

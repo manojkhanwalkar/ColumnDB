@@ -16,4 +16,15 @@ public class ExampleServiceConfiguration extends Configuration {
     public void setMessages(MessagesConfiguration messages) {
         this.messages = messages;
     }
+
+
+    @Valid  private String rootDir;
+
+    public String getRootDir() {
+        return rootDir;
+    }
+
+    public void setRootDir(String rootDir) {
+        this.rootDir = rootDir;
+    }
 }

@@ -1,3 +1,4 @@
+rootDir: /tmp/cluster1/demo/person
 server:
 #  softNofileLimit: 1000
 #  hardNofileLimit: 1000
@@ -9,3 +10,4 @@ server:
       port: 10081
 messages:
   hello: Hello world!
+  rootDir: /tmp

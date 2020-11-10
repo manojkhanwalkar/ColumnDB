@@ -2,7 +2,7 @@ import client.ColumnDBClient;
 import org.codehaus.jackson.map.ObjectMapper;
 import query.*;
 
-public class ClientTester {
+public class PersonMetaDataCreator {
 
 
     static ObjectMapper mapper = new ObjectMapper();
@@ -72,35 +72,7 @@ public class ClientTester {
             client.send("cluster1",meta);
 
 
-            CountRequest countRequest = new CountRequest();
-            countRequest.setClusterName("cluster1");
-            countRequest.setDatabaseName("demo");
-            countRequest.setTableName("person");
 
-            {
-                Criteria criteria = new Criteria();
-                criteria.setColumnName("age");
-                criteria.setType(ConditionType.GT);
-                criteria.setRhs("25");
-
-                countRequest.addCriteria(criteria);
-            }
-            {
-                Criteria criteria = new Criteria();
-                criteria.setColumnName("gender");
-                criteria.setType(ConditionType.EQ);
-                criteria.setRhs("M");
-
-                countRequest.addCriteria(criteria);
-
-            }
-
-            Response response = client.query(clusterName,countRequest);
-
-            System.out.println(response.getResult());
-
-            DataResponse response1 = client.queryData(clusterName,countRequest);
-            System.out.println(response1.getValues());
 
         }
 

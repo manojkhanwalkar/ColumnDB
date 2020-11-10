@@ -14,4 +14,15 @@ public class MessagesConfiguration {
     public void setHello(String hello) {
         this.hello = hello;
     }
+
+
+    @NotNull private String rootDir;
+
+    public String getRootDir() {
+        return rootDir;
+    }
+
+    public void setRootDir(String rootDir) {
+        this.rootDir = rootDir;
+    }
 }

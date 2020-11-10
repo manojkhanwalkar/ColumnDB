@@ -17,20 +17,18 @@ import java.io.*;
 @Produces(MediaType.APPLICATION_JSON)
 public class ColumnResource {
 
-    public ColumnResource() {
+
+     final String rootDirName ;
+
+    public ColumnResource(String rootDirName) {
+
+        this.rootDirName = rootDirName;
     }
 
 
- /*
-
-    @Path(value = "/matchdevice")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response matchDevice(@Context HttpServletRequest hsReq, @Valid final MatchDeviceRequest request) throws Exception {
-        final Boolean enableRestEndPoint = (Boolean) ApiConfig.INSTANCE.getValue(ApiConfig.ENABLE_MATCH_DEVICE);
-  */
+ // TODO  - take the rootdir from the config file
 
     static final String seperator = "/";
-    static final String rootDirName = "/tmp";
 
     static ObjectMapper mapper = new ObjectMapper();
 
@@ -120,7 +118,7 @@ public class ColumnResource {
 
     private  void processTable(File table, DatabaseMetaData databaseMD, String clusterName) {
 
-        // System.out.println(table.getName());
+
 
         String[] metaFile = table.list(new FilenameFilter() {
             @Override

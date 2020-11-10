@@ -9,3 +9,4 @@ server:
       port: 10082
 messages:
   hello: Hello world!
+  rootDir: /tmp
