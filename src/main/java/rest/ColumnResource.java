@@ -176,14 +176,49 @@ public class ColumnResource {
         switch (request.getType())
         {
             case CreateDatabase:
-                createDirs(clusterName,databaseName,tableName);
+                createDirs(clusterName,databaseName,null);
                 return response;
 
             case DeleteDatabase:
-                deleteDirs(clusterName,databaseName);
+                deleteDatabaseDirs(clusterName,databaseName);
+                return response;
+            case DeleteTable:
+                deleteTableDir(clusterName,databaseName,tableName);
                 return response;
 
+            case AddColumn: {
+                createDirs(clusterName, databaseName, tableName);
+                File dir = new File(rootDirName + seperator + clusterName + seperator + databaseName + seperator + tableName);
+                tableMetaData.getColumns().values().stream().forEach(cmd -> {
 
+
+                    File file = new File(dir + seperator + cmd.getColumnName());
+                    try {
+                        file.createNewFile();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+
+                String metaFile = rootDirName+seperator+clusterName+seperator+databaseName+seperator+tableName+seperator+tableName+".meta";
+
+                TableMetaData combined = TableMetaData.addColumns(TableMetaData.fromJSONString(metaFile),tableMetaData);
+
+                try {
+                    String s = mapper.writeValueAsString(combined);
+
+                    FileWriter writer = new FileWriter(rootDirName+seperator+clusterName+seperator+databaseName+seperator+tableName+seperator+tableName+".meta");
+                    BufferedWriter metaFileWriter = new BufferedWriter(writer);
+                    metaFileWriter.write(s);
+                    metaFileWriter.flush();
+                    metaFileWriter.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+                return response;
+            }
             case CreateTable:
 
                 createDirs(clusterName,databaseName,tableName);
@@ -258,7 +293,7 @@ public class ColumnResource {
     }
 
 
-    private void deleteDirs(String clusterName, String databaseName) {
+    private void deleteDatabaseDirs(String clusterName, String databaseName) {
 
         if (clusterName==null || (databaseName==null) )
             return ;
@@ -282,6 +317,37 @@ public class ColumnResource {
                 }
 
                 databaseDir.delete();
+            }
+
+
+
+        }
+
+    }
+
+    private void deleteTableDir(String clusterName, String databaseName,String tableName) {
+
+        if (clusterName==null || (databaseName==null || tableName==null) )
+            return ;
+
+        File clusterDir = new File(rootDirName+seperator+clusterName);
+        if (clusterDir.exists())
+        {
+
+            File databaseDir = new File(clusterDir.getAbsolutePath()+seperator+databaseName);
+            if (databaseDir.exists())
+            {
+                File tableDir =  new File(databaseDir.getAbsolutePath()+seperator+tableName);
+                {
+                    for (File colFile : tableDir.listFiles())
+                    {
+                        colFile.delete();
+                    }
+
+                    tableDir.delete();
+
+                }
+
             }
 
 
