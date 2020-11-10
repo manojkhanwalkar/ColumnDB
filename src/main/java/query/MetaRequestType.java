@@ -5,5 +5,5 @@ package query;
  */
 public enum MetaRequestType {
 
-    CreateTable , AddColumn , DeleteColumn 
+    CreateTable , AddColumn , DeleteColumn , DeleteTable , CreateDatabase, DeleteDatabase
 }

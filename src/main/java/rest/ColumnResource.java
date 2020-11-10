@@ -158,23 +158,27 @@ public class ColumnResource {
 
     @Path("/meta")
     @POST
-    public Response createTable(@Context HttpServletRequest hsReq, @Valid MetaRequest request) {
+    public Response meta(@Context HttpServletRequest hsReq, @Valid MetaRequest request) {
 
 
-       // GraphDB db = ((DBService) Server.getService("DBService")).getDatabase(request.getDbName());
         Response response=null;
 
         System.out.println(request);
 
+        TableMetaData tableMetaData = request.getMetaData();
+
+        String clusterName= tableMetaData.getClusterName();
+        String databaseName = tableMetaData.getDatabaseName();
+        String tableName = tableMetaData.getTableName();
+
+
         switch (request.getType())
         {
+            case CreateDatabase:
+                createDirs(clusterName,databaseName,tableName);
+                return response;
+
             case CreateTable:
-
-                TableMetaData tableMetaData = request.getMetaData();
-
-                String clusterName= tableMetaData.getClusterName();
-                String databaseName = tableMetaData.getDatabaseName();
-                String tableName = tableMetaData.getTableName();
 
                 createDirs(clusterName,databaseName,tableName);
 
@@ -218,17 +222,26 @@ public class ColumnResource {
 
     private void createDirs(String clusterName, String databaseName, String tableName) {
 
+        if (clusterName==null)
+            return ;
+
         File clusterDir = new File(rootDirName+seperator+clusterName);
         if (!clusterDir.exists())
         {
             clusterDir.mkdir();
         }
 
+        if (databaseName==null)
+            return;
+
         File databaseDir = new File(clusterDir.getAbsolutePath()+seperator+databaseName);
         if (!databaseDir.exists())
         {
             databaseDir.mkdir();
         }
+
+        if (tableName==null)
+            return;
 
         File tableDir = new File(databaseDir.getAbsolutePath()+seperator+tableName);
         if (!tableDir.exists())

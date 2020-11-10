@@ -2,7 +2,7 @@ import client.ColumnDBClient;
 import org.codehaus.jackson.map.ObjectMapper;
 import query.*;
 
-public class PersonMetaDataCreator {
+public class PersonTableCreator {
 
 
     static ObjectMapper mapper = new ObjectMapper();
@@ -24,7 +24,7 @@ public class PersonMetaDataCreator {
             meta.setType(MetaRequestType.CreateTable);
 
             TableMetaData tableMetaData = new TableMetaData();
-            tableMetaData.setDatabaseName("demo");
+            tableMetaData.setDatabaseName("demo1");
             tableMetaData.setTableName("person");
 
             //age,gender,zip,income,state
