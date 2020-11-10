@@ -185,6 +185,35 @@ public class ColumnResource {
             case DeleteTable:
                 deleteTableDir(clusterName,databaseName,tableName);
                 return response;
+            case DeleteColumn: {
+
+                String metaFile = rootDirName+seperator+clusterName+seperator+databaseName+seperator+tableName+seperator+tableName+".meta";
+
+                TableMetaData combined = TableMetaData.removeColumns(TableMetaData.fromJSONString(metaFile),tableMetaData);
+
+                try {
+                    String s = mapper.writeValueAsString(combined);
+
+                    FileWriter writer = new FileWriter(rootDirName+seperator+clusterName+seperator+databaseName+seperator+tableName+seperator+tableName+".meta");
+                    BufferedWriter metaFileWriter = new BufferedWriter(writer);
+                    metaFileWriter.write(s);
+                    metaFileWriter.flush();
+                    metaFileWriter.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                File dir = new File(rootDirName + seperator + clusterName + seperator + databaseName + seperator + tableName);
+                tableMetaData.getColumns().values().stream().forEach(cmd -> {
+
+
+                    File file = new File(dir + seperator + cmd.getColumnName());
+                    file.delete();
+                });
+
+                return response;
+            }
+
 
             case AddColumn: {
                 createDirs(clusterName, databaseName, tableName);

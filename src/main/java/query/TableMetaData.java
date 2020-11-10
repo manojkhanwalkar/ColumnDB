@@ -74,6 +74,7 @@ public class TableMetaData {
 
     }
 
+
     public String getClusterName() {
         return clusterName;
     }
@@ -116,59 +117,6 @@ public class TableMetaData {
         this.columns = columns;
     }
 
-    public static void main(String[] args) {
-
-        ObjectMapper mapper = new ObjectMapper();
-        TableMetaData tableMetaData = new TableMetaData();
-        //tableMetaData.setClusterName("cluster1");
-        tableMetaData.setDatabaseName("demo");
-        tableMetaData.setTableName("person");
-
-        //age,gender,zip,income,state
-        {
-            ColumnMetaData metadata = new ColumnMetaData();
-            metadata.setColumnName("age");
-            metadata.setMaxSize(2);
-            tableMetaData.addColumn(metadata);
-
-        }
-        {
-            ColumnMetaData metadata = new ColumnMetaData();
-            metadata.setColumnName("gender");
-            metadata.setMaxSize(1);
-            tableMetaData.addColumn(metadata);
-
-        }
-        {
-            ColumnMetaData metadata = new ColumnMetaData();
-            metadata.setColumnName("zip");
-            metadata.setMaxSize(5);
-            tableMetaData.addColumn(metadata);
-
-        }
-        {
-            ColumnMetaData metadata = new ColumnMetaData();
-            metadata.setColumnName("income");
-            metadata.setMaxSize(7);
-            tableMetaData.addColumn(metadata);
-
-        }
-        {
-            ColumnMetaData metadata = new ColumnMetaData();
-            metadata.setColumnName("state");
-            metadata.setMaxSize(2);
-            tableMetaData.addColumn(metadata);
-
-        }
-
-        try {
-            String s = mapper.writeValueAsString(tableMetaData);
-            System.out.println(s);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
-    }
 
     @Override
     public String toString() {
