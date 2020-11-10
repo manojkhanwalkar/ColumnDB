@@ -26,7 +26,6 @@ public class ColumnResource {
     }
 
 
- // TODO  - take the rootdir from the config file
 
     static final String seperator = "/";
 
@@ -177,8 +176,10 @@ public class ColumnResource {
                 String databaseName = tableMetaData.getDatabaseName();
                 String tableName = tableMetaData.getTableName();
 
+                createDirs(clusterName,databaseName,tableName);
+
                 File dir = new File(rootDirName+seperator+clusterName+seperator+databaseName+seperator+tableName);
-                dir.mkdirs();
+                //dir.mkdirs();
 
                 tableMetaData.getColumns().values().stream().forEach(cmd->{
 
@@ -213,5 +214,27 @@ public class ColumnResource {
 
 
         return response;
+    }
+
+    private void createDirs(String clusterName, String databaseName, String tableName) {
+
+        File clusterDir = new File(rootDirName+seperator+clusterName);
+        if (!clusterDir.exists())
+        {
+            clusterDir.mkdir();
+        }
+
+        File databaseDir = new File(clusterDir.getAbsolutePath()+seperator+databaseName);
+        if (!databaseDir.exists())
+        {
+            databaseDir.mkdir();
+        }
+
+        File tableDir = new File(databaseDir.getAbsolutePath()+seperator+tableName);
+        if (!tableDir.exists())
+        {
+            tableDir.mkdir();
+        }
+
     }
 }
