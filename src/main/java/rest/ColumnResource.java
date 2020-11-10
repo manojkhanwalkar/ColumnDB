@@ -12,6 +12,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.io.*;
+import java.util.Arrays;
 
 @Path("/columndb")
 @Produces(MediaType.APPLICATION_JSON)
@@ -178,6 +179,11 @@ public class ColumnResource {
                 createDirs(clusterName,databaseName,tableName);
                 return response;
 
+            case DeleteDatabase:
+                deleteDirs(clusterName,databaseName);
+                return response;
+
+
             case CreateTable:
 
                 createDirs(clusterName,databaseName,tableName);
@@ -247,6 +253,39 @@ public class ColumnResource {
         if (!tableDir.exists())
         {
             tableDir.mkdir();
+        }
+
+    }
+
+
+    private void deleteDirs(String clusterName, String databaseName) {
+
+        if (clusterName==null || (databaseName==null) )
+            return ;
+
+        File clusterDir = new File(rootDirName+seperator+clusterName);
+        if (clusterDir.exists())
+        {
+
+            File databaseDir = new File(clusterDir.getAbsolutePath()+seperator+databaseName);
+            if (databaseDir.exists())
+            {
+                for (File tableDir : databaseDir.listFiles())
+                {
+                        for (File colFile : tableDir.listFiles())
+                        {
+                            colFile.delete();
+                        }
+
+                    tableDir.delete();
+
+                }
+
+                databaseDir.delete();
+            }
+
+
+
         }
 
     }
