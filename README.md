@@ -19,3 +19,7 @@ Server is the main class.
 Multiple server instances can be instantiated - Call each with the complete path of the test.xml or test1.xml file.
 The test and test1.xml files contain the configuration of the rest service used to handle the queries.
 Adjust the path entries in these files to point to the configuration and configuration1.yml files. 
+
+
+The data is laid out on the nodes in the cluster in column format. A separate file is created per column. 
+The position in the column file determines which row the various column values belong to. 
