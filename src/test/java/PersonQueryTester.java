@@ -11,10 +11,8 @@ public class PersonQueryTester {
 
         ColumnDBClient client = ColumnDBClient.getInstance();
 
-        client.addCluster(clusterName,10005);
-        client.addCluster(clusterName,"localhost");
-        client.addCluster(clusterName1,10015);
-        client.addCluster(clusterName1,"localhost");
+        client.addCluster(clusterName,"localhost",10005);
+        client.addCluster(clusterName1,"localhost",10015);
 
 
             CountRequest countRequest = new CountRequest();

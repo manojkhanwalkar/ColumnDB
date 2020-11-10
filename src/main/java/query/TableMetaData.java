@@ -62,7 +62,7 @@ public class TableMetaData {
 
         ObjectMapper mapper = new ObjectMapper();
         TableMetaData tableMetaData = new TableMetaData();
-        tableMetaData.setClusterName("cluster1");
+        //tableMetaData.setClusterName("cluster1");
         tableMetaData.setDatabaseName("demo");
         tableMetaData.setTableName("person");
 
@@ -115,7 +115,6 @@ public class TableMetaData {
     @Override
     public String toString() {
         return "TableMetaData{" +
-                "clusterName='" + clusterName + '\'' +
                 ", databaseName='" + databaseName + '\'' +
                 ", tableName='" + tableName + '\'' +
                 ", columns=" + columns +

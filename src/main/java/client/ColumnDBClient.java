@@ -2,7 +2,9 @@ package client;
 
 import query.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ColumnDBClient {
@@ -26,17 +28,23 @@ public class ColumnDBClient {
 
     }
 
-    Map<String,Integer> ports = new HashMap<>();
-    Map<String,String> hosts = new HashMap<>();
-
-    public void addCluster(String name , int port)
+    static class HostPortTuple
     {
-        ports.put(name,port);
+        String host;
+        int port;
+
+        public HostPortTuple(String host, int port) {
+            this.host = host;
+            this.port = port;
+        }
     }
 
-    public void addCluster(String name , String host)
+    Map<String,HostPortTuple> hosts = new HashMap<>();
+
+
+    public void addCluster(String name , String host, int port)
     {
-        hosts.put(name,host);
+        hosts.put(name,new HostPortTuple(host,port));
     }
 
 
@@ -53,7 +61,8 @@ public class ColumnDBClient {
         RestConnector connector = connectors.get(clusterName);
         if (connector==null)
         {
-            connector = new RestConnector(hosts.get(clusterName), ports.get(clusterName));
+            HostPortTuple tuple = hosts.get(clusterName);
+            connector = new RestConnector(tuple.host,tuple.port);
             connector.connect();
             connectors.put(clusterName,connector);
 
@@ -75,11 +84,23 @@ public class ColumnDBClient {
 
     }
 
-    public Response send(String clusterName , MetaRequest request) {
+    public List<Response> send(MetaRequest request) {
 
-        RestConnector connector = getConnector(clusterName);
+        List<Response> responses = new ArrayList<>();
 
-        return connector.send(request);
+        hosts.keySet().stream().forEach(cluster->{
+
+            RestConnector connector = getConnector(cluster);
+
+            request.getMetaData().setClusterName(cluster);
+
+            responses.add(connector.send(request));
+
+        });
+
+        return responses;
+
+
 
     }
 

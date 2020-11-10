@@ -14,10 +14,8 @@ public class PersonMetaDataCreator {
 
         ColumnDBClient client = ColumnDBClient.getInstance();
 
-        client.addCluster(clusterName,10005);
-        client.addCluster(clusterName,"localhost");
-        client.addCluster(clusterName1,10015);
-        client.addCluster(clusterName1,"localhost");
+        client.addCluster(clusterName,"localhost", 10005);
+        client.addCluster(clusterName1,"localhost",10015);
 
 
         {
@@ -26,7 +24,6 @@ public class PersonMetaDataCreator {
             meta.setType(MetaRequestType.CreateTable);
 
             TableMetaData tableMetaData = new TableMetaData();
-            tableMetaData.setClusterName("cluster1");
             tableMetaData.setDatabaseName("demo");
             tableMetaData.setTableName("person");
 
@@ -69,7 +66,7 @@ public class PersonMetaDataCreator {
 
             meta.setMetaData(tableMetaData);
 
-            client.send("cluster1",meta);
+            client.send(meta);
 
 
 

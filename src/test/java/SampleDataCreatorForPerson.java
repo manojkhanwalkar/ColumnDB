@@ -1,15 +1,13 @@
-import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.io.RandomAccessFile;
 import java.util.Random;
 
 /**
  * Created by mkhanwalkar on 8/2/15.
  */
-public class PersonDataCreator {
+public class SampleDataCreatorForPerson {
 
     public static void main(String[] args) {
-        PersonDataCreator dataCreator = new PersonDataCreator();
+        SampleDataCreatorForPerson dataCreator = new SampleDataCreatorForPerson();
 
         dataCreator.create();
     }
