@@ -35,7 +35,7 @@
 
     <bean id="RestService" class="columndb.RestService">
         <property name="name" value="RestService" />
-        <property name="restConfigName" value="/home/manoj/IdeaProjects/ColumnDB/src/main/java/rest/configuration.yml" />
+        <property name="restConfigName" value="/home/manoj/IdeaProjects/ColumnDB/src/main/resources/configuration.yml" />
 
     </bean>
 
