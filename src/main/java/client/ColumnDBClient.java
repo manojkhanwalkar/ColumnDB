@@ -81,15 +81,19 @@ public class ColumnDBClient {
     //TODO - break the request into chunks based on data container size and then send a chunk to one server.
     public List<Response> send( Request request) {
 
+        RequestChunker chunker = new RequestChunker(request,BatchSize);
+
         List<Response> responses = new ArrayList<>();
 
         hosts.keySet().stream().forEach(cluster->{
 
+            Request r = chunker.next().get();
+
             RestConnector connector = getConnector(cluster);
 
-            request.setClusterName(cluster);
+            r.setClusterName(cluster);
 
-            responses.add(connector.send(request));
+            responses.add(connector.send(r));
 
         });
 

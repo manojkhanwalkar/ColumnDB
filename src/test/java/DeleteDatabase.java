@@ -26,7 +26,7 @@ public class DeleteDatabase {
             meta.setType(MetaRequestType.DeleteDatabase);
 
             TableMetaData tableMetaData = new TableMetaData();
-            tableMetaData.setDatabaseName("demo1");
+            tableMetaData.setDatabaseName("demo");
 
             meta.setMetaData(tableMetaData);
 
