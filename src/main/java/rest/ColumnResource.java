@@ -12,7 +12,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.io.*;
-import java.util.Arrays;
 
 @Path("/columndb")
 @Produces(MediaType.APPLICATION_JSON)
@@ -46,17 +45,32 @@ public class ColumnResource {
 
     @Path("/dataquery")
     @POST
-    public DataResponse dataquery(@Context HttpServletRequest hsReq, @Valid CountRequest request) {
+    public DataContainer dataquery(@Context HttpServletRequest hsReq, @Valid CountRequest request) {
 
         CountNDataProcessor processor = new CountNDataProcessor(request);
 
-         DataResponse metaResponse = processor.processData();
+         DataContainer metaResponse = processor.processData();
 
 
 
         return metaResponse;
 
     }
+
+
+    @Path("/batch")
+    @POST
+    public Response batch(@Valid Request request) {
+
+        System.out.println(request);
+
+        // get the cluster + database + tablename from container and navigate to that directory.
+        // for each column in the map , open the corresponding coclumn file and go to the end
+        // append the list of values to the file
+
+        return null;
+    }
+
 
 
 
@@ -114,42 +128,6 @@ public class ColumnResource {
             }
 
         }
-    }
-
-    private  void processTable(File table, DatabaseMetaData databaseMD, String clusterName) {
-
-
-
-        String[] metaFile = table.list(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-
-                if (name.endsWith(".meta"))
-                    return true;
-                else
-                    return false;
-
-            }
-        });
-
-        TableMetaData tableMetaData = null;
-        try {
-            FileReader reader = new FileReader(rootDirName+seperator+clusterName+seperator+databaseMD.getName()+seperator+table.getName()+seperator+table.getName()+".meta");
-            BufferedReader metaFileReader = new BufferedReader(reader);
-            String s = metaFileReader.readLine();
-
-            tableMetaData = mapper.readValue(s, TableMetaData.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // System.out.println(tableMetaData);
-
-
-        // read meta file into
-        databaseMD.addTableMetaData(tableMetaData);
-
-
     }
 
 
@@ -289,6 +267,44 @@ public class ColumnResource {
 
         return response;
     }
+
+    private  void processTable(File table, DatabaseMetaData databaseMD, String clusterName) {
+
+
+
+        String[] metaFile = table.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+
+                if (name.endsWith(".meta"))
+                    return true;
+                else
+                    return false;
+
+            }
+        });
+
+        TableMetaData tableMetaData = null;
+        try {
+            FileReader reader = new FileReader(rootDirName+seperator+clusterName+seperator+databaseMD.getName()+seperator+table.getName()+seperator+table.getName()+".meta");
+            BufferedReader metaFileReader = new BufferedReader(reader);
+            String s = metaFileReader.readLine();
+
+            tableMetaData = mapper.readValue(s, TableMetaData.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // System.out.println(tableMetaData);
+
+
+        // read meta file into
+        databaseMD.addTableMetaData(tableMetaData);
+
+
+    }
+
+
 
     private void createDirs(String clusterName, String databaseName, String tableName) {
 

@@ -49,7 +49,7 @@ public class RestConnector  {
     public Response send(Request request)
     {
         HttpEntity<Request> requestEntity = new HttpEntity<>(request);
-        ResponseEntity<Response> response1 = restTemplate.exchange("http://" + host + ":" + port +  "/columndb", HttpMethod.POST, requestEntity, Response.class);
+        ResponseEntity<Response> response1 = restTemplate.exchange("http://" + host + ":" + port +  "/columndb/batch", HttpMethod.POST, requestEntity, Response.class);
 
         return response1.getBody();
     }
@@ -76,9 +76,9 @@ public class RestConnector  {
         return response1.getBody();
     }
 
-    public DataResponse queryData(CountRequest request) {
+    public DataContainer queryData(CountRequest request) {
         HttpEntity<CountRequest> requestEntity = new HttpEntity<>(request);
-        ResponseEntity<DataResponse> response1 = restTemplate.exchange("http://" + host + ":" + port +  "/columndb/dataquery", HttpMethod.POST, requestEntity, DataResponse.class);
+        ResponseEntity<DataContainer> response1 = restTemplate.exchange("http://" + host + ":" + port +  "/columndb/dataquery", HttpMethod.POST, requestEntity, DataContainer.class);
 
         return response1.getBody();
     }

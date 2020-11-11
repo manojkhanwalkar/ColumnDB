@@ -1,5 +1,4 @@
 import client.ColumnDBClient;
-import org.codehaus.jackson.map.ObjectMapper;
 import query.*;
 
 public class PersonQueryTester {
@@ -42,7 +41,7 @@ public class PersonQueryTester {
 
             System.out.println(response.getResult());
 
-            DataResponse response1 = client.queryData(clusterName,countRequest);
+            DataContainer response1 = client.queryData(clusterName,countRequest);
             System.out.println(response1.getValues());
 
 

@@ -73,14 +73,29 @@ public class ColumnDBClient {
     }
 
 
+    static int BatchSize = 10; // decides how many rows will be sent in one request.
 
 
 
-    public Response send(String clusterName , Request request) {
+    //TODO - send in parallel to all clusters
+    //TODO - break the request into chunks based on data container size and then send a chunk to one server.
+    public List<Response> send( Request request) {
 
-        RestConnector connector = getConnector(clusterName);
+        List<Response> responses = new ArrayList<>();
 
-        return connector.send(request);
+        hosts.keySet().stream().forEach(cluster->{
+
+            RestConnector connector = getConnector(cluster);
+
+            request.setClusterName(cluster);
+
+            responses.add(connector.send(request));
+
+        });
+
+        return responses;
+
+
 
     }
 
@@ -121,7 +136,7 @@ public class ColumnDBClient {
 
     }
 
-    public DataResponse queryData(String clusterName , CountRequest request) {
+    public DataContainer queryData(String clusterName , CountRequest request) {
 
         RestConnector connector = getConnector(clusterName);
 

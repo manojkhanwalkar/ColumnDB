@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DataResponse {
+public class DataContainer {
 
     Map<String,List<String>> values = new HashMap<>();
 
@@ -20,5 +20,13 @@ public class DataResponse {
     public void addValues(String columnName , List<String> value)
     {
         values.put(columnName,value);
+    }
+
+
+    @Override
+    public String toString() {
+        return "DataContainer{" +
+                "values=" + values +
+                '}';
     }
 }

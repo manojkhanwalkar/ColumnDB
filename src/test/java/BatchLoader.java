@@ -1,8 +1,6 @@
 import client.ColumnDBClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import query.ColumnMetaData;
-import query.MetaResponse;
-import query.TableMetaData;
+import query.*;
 
 import java.io.*;
 
@@ -26,19 +24,30 @@ public class BatchLoader {
         BatchLoader loader = new BatchLoader("/tmp/person.csv","demo","person");
 
         String clusterName = "cluster1";
-        //String clusterName1 = "cluster2";
+        String clusterName1 = "cluster2";
 
         ColumnDBClient client = ColumnDBClient.getInstance();
 
         client.addCluster(clusterName,"localhost", 10005);
-        //client.addCluster(clusterName1,"localhost",10015);
+        client.addCluster(clusterName1,"localhost",10015);
 
         MetaResponse metaResponse = client.query();
 
         System.out.println(metaResponse);
 
-        //   loader.getMetaData();
-     //   loader.loadData();
+        Request request  = new Request();
+
+        request.setClusterName(clusterName);
+        request.setDatabaseName("demo");
+        request.setTableName("person");
+
+        DataContainer container = new DataContainer(); // to be filled from the file .
+
+        request.setDataContainer(container);
+
+        client.send(request);
+
+
 
     }
 

@@ -41,9 +41,9 @@ public class CountNDataProcessor {
      int[] positions ;
 
 
-    public DataResponse processData()
+    public DataContainer processData()
     {
-        DataResponse response = new DataResponse();
+        DataContainer response = new DataContainer();
         processCount();  // gets the positions .
         // for each column , read file , check data against positions and create a list of column results .
 
