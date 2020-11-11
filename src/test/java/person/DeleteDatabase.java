@@ -1,11 +1,12 @@
+package person;
+
 import client.ColumnDBClient;
 import org.codehaus.jackson.map.ObjectMapper;
-import query.ColumnMetaData;
 import query.MetaRequest;
 import query.MetaRequestType;
 import query.TableMetaData;
 
-public class CreateDatabase {
+public class DeleteDatabase {
 
 
     static ObjectMapper mapper = new ObjectMapper();
@@ -13,16 +14,18 @@ public class CreateDatabase {
     public static void main(String[] args)  throws Exception {
 
 
+
         ColumnDBClient client = ColumnDBClient.getInstance();
+
 
 
         {
 
             MetaRequest meta = new MetaRequest();
-            meta.setType(MetaRequestType.CreateDatabase);
+            meta.setType(MetaRequestType.DeleteDatabase);
 
             TableMetaData tableMetaData = new TableMetaData();
-            tableMetaData.setDatabaseName("mydb");
+            tableMetaData.setDatabaseName("demo");
 
             meta.setMetaData(tableMetaData);
 

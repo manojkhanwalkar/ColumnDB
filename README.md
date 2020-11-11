@@ -1,6 +1,7 @@
 # **Simple column database**
 **Features**
 1. Column database enables extremely fast queries
+
 **Assumptions**
 1. Fixed number of servers in the cluster determined in the beginning 
 2. Servers cannot be added or deleted 

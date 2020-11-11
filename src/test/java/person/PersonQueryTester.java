@@ -1,3 +1,5 @@
+package person;
+
 import client.ColumnDBClient;
 import query.*;
 import table.Table;

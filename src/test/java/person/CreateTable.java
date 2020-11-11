@@ -1,3 +1,5 @@
+package person;
+
 import client.ColumnDBClient;
 import org.codehaus.jackson.map.ObjectMapper;
 import query.*;
