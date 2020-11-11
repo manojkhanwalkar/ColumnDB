@@ -185,11 +185,30 @@ public class ColumnDBClient {
 
     }
 
-    public DataContainer queryData(String clusterName , CountRequest request) {
+    public List<DataContainer> queryData(CountRequest request) {
 
-        RestConnector connector = getConnector(clusterName);
+        final List<DataContainer> responses = new ArrayList<>();
+        hosts.keySet().parallelStream().forEach(cluster->{
 
-        return connector.queryData(request);
+            CountRequest countRequest = CountRequest.duplicate(request);
+
+            countRequest.setClusterName(cluster);
+
+            RestConnector connector = getConnector(cluster);
+
+            DataContainer response = connector.queryData(request);
+
+            synchronized (responses)
+            {
+                responses.add(response);
+            }
+
+
+        });
+
+        return responses;
+
+
 
     }
 

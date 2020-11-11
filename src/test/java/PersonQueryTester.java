@@ -39,9 +39,10 @@ public class PersonQueryTester {
 
             responses.stream().map(resp->resp.getResult()).forEach(System.out::println);
 
-          /*  DataContainer response1 = client.queryData(countRequest);
-            System.out.println(response1.getValues());
-*/
+            List<DataContainer> dataContainers = client.queryData(countRequest);
+
+            dataContainers.stream().forEach(System.out::println);
+
 
 
 
