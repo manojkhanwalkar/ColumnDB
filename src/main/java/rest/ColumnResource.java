@@ -18,7 +18,7 @@ import java.io.*;
 public class ColumnResource {
 
 
-     final String rootDirName ;
+     public static  String rootDirName ;
 
     public ColumnResource(String rootDirName) {
 
@@ -27,7 +27,7 @@ public class ColumnResource {
 
 
 
-    static final String seperator = "/";
+   public  static final String seperator = "/";
 
     static ObjectMapper mapper = new ObjectMapper();
 

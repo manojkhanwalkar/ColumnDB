@@ -5,7 +5,7 @@
 1. Fixed number of servers in the cluster determined in the beginning 
 2. Servers cannot be added or deleted 
 3. Data once uploaded is used for querying
-4. New databases , tables can be added , but existing ones cannot be deleted or modified.
+4. New databases , tables can be added or deleted. Columns can only be deleted.
 5. New data can be added to existing tables, but data cannot be deleted or modified.
 6. The max length of a value in a column needs to be specified upfront in the metadata.
 

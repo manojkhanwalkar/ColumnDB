@@ -9,17 +9,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static rest.ColumnResource.rootDirName;
+import static rest.ColumnResource.seperator;
+
 public class CountNDataProcessor {
 
-    static final String seperator = "/";
-    static final String rootDirName = "/tmp";  //TODO - pick from config
+   // static final String seperator = "/";
+    //static final String rootDirName = "/tmp";  //TODO - pick from config
 
 
     String clusterName ;
     String dataBaseName ;
     String tableName ;
 
-     int numRecords=100; //TODO - this value needs to be updated in the metadata .
+   //  int numRecords=100; //TODO - this value needs to be updated in the metadata .
 
     CountRequest request;
 
@@ -77,11 +80,6 @@ public class CountNDataProcessor {
 
         Response response = new Response();
 
-        positions = new int[numRecords];
-        for (int i=0;i<positions.length;i++)
-        {
-            positions[i] = 1;
-        }
 
         request.getCriteriaList().stream().forEach(criteria->{
 
@@ -102,6 +100,18 @@ public class CountNDataProcessor {
     private  void checkCondition(int size , String columnName, String rhs, ConditionType type)
     {
         StringBuilder data = readFile(rootDirName+seperator+clusterName+seperator+dataBaseName+seperator+tableName+seperator+columnName);
+
+        if (positions==null)
+        {
+
+            positions = new int[data.length()/size];
+            for (int i=0;i<positions.length;i++)
+            {
+                positions[i] = 1;
+            }
+
+
+        }
 
         int count = 0;
         for (int i=0;i<data.length();i+=size)
