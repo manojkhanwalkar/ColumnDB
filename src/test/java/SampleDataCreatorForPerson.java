@@ -27,7 +27,7 @@ public class SampleDataCreatorForPerson {
             PrintWriter writer = new PrintWriter("/tmp/person.csv");
             writer.write("age,gender,zip,income,state\n");
 
-            for (int i=0;i<100;i++) {
+            for (int i=0;i<10000;i++) {
                 writer.write(getAge() + ",");
                 writer.write(getGender() + ",");
                 writer.write(getZip() + ",");

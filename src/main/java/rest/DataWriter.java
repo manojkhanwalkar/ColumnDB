@@ -32,17 +32,15 @@ public class DataWriter {
         directory = rootDirName+seperator+clusterName+seperator+databaseName+seperator+tableName+seperator;
     }
 
-    //TODO - position at end .
 
-    //TODO - parallel write for the column files
 
     public void write()
     {
         DataContainer container = request.getDataContainer();
-        container.getValues().entrySet().stream().forEach(ent->{
+        container.getValues().entrySet().parallelStream().forEach(ent->{
 
             String name = ent.getKey();
-            try(BufferedWriter writer = new BufferedWriter(new FileWriter(directory+name)))
+            try(BufferedWriter writer = new BufferedWriter(new FileWriter(directory+name,true)))
             {
                 for (String s : ent.getValue()) {
                     writer.write(s);
