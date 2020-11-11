@@ -24,8 +24,8 @@ public class CreateTable {
             meta.setType(MetaRequestType.CreateTable);
 
             TableMetaData tableMetaData = new TableMetaData();
-            tableMetaData.setDatabaseName("demo1");
-            tableMetaData.setTableName("person1");
+            tableMetaData.setDatabaseName("demo");
+            tableMetaData.setTableName("person");
 
             //age,gender,zip,income,state
             {

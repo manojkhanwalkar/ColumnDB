@@ -2,50 +2,64 @@ import client.ColumnDBClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import query.*;
 
+import javax.xml.crypto.Data;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BatchLoader {
 
 
 
-  String  fileName;
+  String  dataFileName;
   String databaseName;
   String tableName;
 
+    ColumnDBClient client;
+
     public BatchLoader(String fileName, String databaseName , String tableName) {
 
-        this.fileName = fileName;
+        this.dataFileName = fileName;
         this.databaseName=databaseName;
         this.tableName = tableName;
-    }
 
-    public static void main(String[] args) {
-
-        BatchLoader loader = new BatchLoader("/tmp/person.csv","demo","person");
-
-        String clusterName = "cluster1";
-        String clusterName1 = "cluster2";
-
-        ColumnDBClient client = ColumnDBClient.getInstance();
+         client = ColumnDBClient.getInstance();
 
         client.addCluster(clusterName,"localhost", 10005);
         client.addCluster(clusterName1,"localhost",10015);
 
-        MetaResponse metaResponse = client.query();
+    }
 
-        System.out.println(metaResponse);
+    public static void main(String[] args) {
+
+        BatchLoader loader = new BatchLoader("/tmp/person.csv", "demo", "person");
+
+
+        loader.loadMetaData();
+
+        DataContainer datacontainer = loader.loadData();
+
+        loader.load(datacontainer);
+
+    }
+
+    public void load(DataContainer container)
+    {
+
+
 
         Request request  = new Request();
 
-        request.setClusterName(clusterName);
-        request.setDatabaseName("demo");
-        request.setTableName("person");
 
-        DataContainer container = new DataContainer(); // to be filled from the file .
+        request.setDatabaseName(databaseName);
+        request.setTableName(tableName);
+
 
         request.setDataContainer(container);
 
         client.send(request);
+
+
 
 
 
@@ -56,14 +70,26 @@ public class BatchLoader {
 
     String[] spaces;
 
-   /* private void loadMetaData()
-    {
-        try {
-            FileReader reader = new FileReader(rootDirName+seperator+clusterName+seperator+databaseName+seperator+tableName+seperator+tableName+".meta");
-            BufferedReader metaFileReader = new BufferedReader(reader);
-            String s = metaFileReader.readLine();
+    static String rootDirName = "/tmp";
+    static String seperator = "/";
 
-             tableMetaData = mapper.readValue(s,TableMetaData.class);
+    String clusterName = "cluster1";
+    String clusterName1 = "cluster2";
+
+
+    private void loadMetaData()
+    {
+
+
+            MetaResponse metaResponse = client.query();
+
+            System.out.println(metaResponse);
+
+            tableMetaData= metaResponse.getClusterMetaData().getDatabaseMetaData().stream()
+                    .filter(d->d.getName().equals(databaseName))
+                    .flatMap(d->d.getTableMetaData().stream())
+                    .filter(t->t.getTableName().equals(tableName)).findFirst().get();
+
 
             System.out.println(tableMetaData);
 
@@ -88,14 +114,13 @@ public class BatchLoader {
 
 
 
-            } catch (IOException e) {
-            e.printStackTrace();
-        }
 
 
-    }*/
+    }
 
-   /* private void loadData() {
+
+
+    private DataContainer loadData() {
 
 
         // read file for columns , get maxsize from metadata .
@@ -106,10 +131,11 @@ public class BatchLoader {
             FileReader reader = new FileReader(dataFileName);
             BufferedReader dataReader = new BufferedReader(reader);
             String[] columnNames  = dataReader.readLine().split(",");
-            BufferedWriter[] writers = new BufferedWriter[columnNames.length];
+            List<List<String>>writers = new ArrayList<>();
             int[] lengths = new int[columnNames.length];
 
-            createWriters(writers,columnNames,lengths);
+            //createWriters(writers,columnNames,lengths);
+            createLists(writers,columnNames,lengths);
 
             String s;
             while ((s=dataReader.readLine())!=null)
@@ -122,20 +148,33 @@ public class BatchLoader {
                 }
                 for (int i=0;i<values.length;i++)
                 {
-                    writers[i].write(adjustLength(values[i],lengths[i]));
+                    writers.get(i).add(adjustLength(values[i],lengths[i]));
                 }
             }
 
-            for (BufferedWriter writer : writers )
-            {
-                writer.flush();
-                writer.close();
-            }
+            return createContainer(writers,columnNames);
+
+
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        return null;
+
+
+    }
+
+    private DataContainer createContainer(List<List<String>> writers , String[] columnNames) {
+
+        DataContainer container = new DataContainer();
+
+        for (int i=0;i<columnNames.length;i++)
+        {
+            container.addValues(columnNames[i], writers.get(i));
+        }
+
+        return container;
 
     }
 
@@ -149,7 +188,6 @@ public class BatchLoader {
         }
     }
 
-    //TODO - change code to go to end of file . might have to use different writer .
 
     private void createWriters(BufferedWriter[] writers, String[] columnNames, int[] lengths)
     {
@@ -169,5 +207,18 @@ public class BatchLoader {
         }
     }
 
-*/
+    private void createLists(List<List<String>> writers, String[] columnNames, int[] lengths)
+    {
+            for (int i=0;i<columnNames.length;i++)
+            {
+                String name = columnNames[i];
+                ColumnMetaData cmd = tableMetaData.getColumnMetaData(name);
+                lengths[i] = cmd.getMaxSize();
+                writers.add(new ArrayList<>());
+
+            }
+    }
+
+
+
 }
