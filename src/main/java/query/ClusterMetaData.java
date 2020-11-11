@@ -35,4 +35,12 @@ public class ClusterMetaData {
     public List<DatabaseMetaData> getDatabaseMetaData() {
         return databaseMetaData;
     }
+
+    @Override
+    public String toString() {
+        return "ClusterMetaData{" +
+                "name='" + name + '\'' +
+                ", databaseMetaData=" + databaseMetaData +
+                '}';
+    }
 }

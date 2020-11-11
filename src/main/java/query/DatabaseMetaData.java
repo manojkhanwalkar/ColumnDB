@@ -38,4 +38,12 @@ public class DatabaseMetaData {
         tableMetaData.add(metadata);
 
     }
+
+    @Override
+    public String toString() {
+        return "DatabaseMetaData{" +
+                "name='" + name + '\'' +
+                ", tableMetaData=" + tableMetaData +
+                '}';
+    }
 }

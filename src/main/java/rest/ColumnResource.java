@@ -62,7 +62,7 @@ public class ColumnResource {
 
     @Path("/metaquery")
     @POST
-    public MetaResponse query(@Context HttpServletRequest hsReq, @Valid String clusterName) {
+    public MetaResponse metaQuery(@Context HttpServletRequest hsReq, @Valid String clusterName) {
 
         MetaResponse metaResponse = new MetaResponse();
 

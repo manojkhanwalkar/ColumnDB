@@ -14,4 +14,12 @@ public class MetaResponse {
     public void setClusterMetaData(ClusterMetaData clusterMetaData) {
         this.clusterMetaData = clusterMetaData;
     }
+
+
+    @Override
+    public String toString() {
+        return "MetaResponse{" +
+                "clusterMetaData=" + clusterMetaData +
+                '}';
+    }
 }

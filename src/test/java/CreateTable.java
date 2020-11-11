@@ -2,7 +2,7 @@ import client.ColumnDBClient;
 import org.codehaus.jackson.map.ObjectMapper;
 import query.*;
 
-public class PersonTableCreator {
+public class CreateTable {
 
 
     static ObjectMapper mapper = new ObjectMapper();

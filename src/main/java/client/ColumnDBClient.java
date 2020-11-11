@@ -104,8 +104,9 @@ public class ColumnDBClient {
 
     }
 
-    public MetaResponse query(String clusterName) {
+    public MetaResponse query() {
 
+        String clusterName = hosts.keySet().stream().findFirst().get();
         RestConnector connector = getConnector(clusterName);
         return connector.query(clusterName);
 
