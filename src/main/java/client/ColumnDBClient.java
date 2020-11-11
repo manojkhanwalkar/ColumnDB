@@ -83,17 +83,34 @@ public class ColumnDBClient {
 
         RequestChunker chunker = new RequestChunker(request,BatchSize);
 
-        List<Response> responses = new ArrayList<>();
+        final List<Response> responses = new ArrayList<>();
 
-        hosts.keySet().stream().forEach(cluster->{
+        hosts.keySet().parallelStream().forEach(cluster->{
 
-            Request r = chunker.next().get();
+            while(true) {
 
-            RestConnector connector = getConnector(cluster);
+                var result = chunker.next();
 
-            r.setClusterName(cluster);
+                if (result.isPresent())
+                {
+                    RestConnector connector = getConnector(cluster);
 
-            responses.add(connector.send(r));
+                    result.get().setClusterName(cluster);
+
+                    var res = connector.send(result.get());
+
+                    synchronized (responses) {
+                        responses.add(res);
+
+                    }
+                }
+                else
+                {
+                    break;
+                }
+
+
+            }
 
         });
 

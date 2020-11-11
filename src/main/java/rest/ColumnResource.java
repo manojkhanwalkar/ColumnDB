@@ -64,11 +64,15 @@ public class ColumnResource {
 
         System.out.println(request);
 
+        DataWriter writer = new DataWriter(request,rootDirName);
+
+        writer.write();
+
         // get the cluster + database + tablename from container and navigate to that directory.
         // for each column in the map , open the corresponding coclumn file and go to the end
         // append the list of values to the file
 
-        //TODO - write each column data file in parallel .
+
 
         return null;
     }

@@ -189,23 +189,7 @@ public class BatchLoader {
     }
 
 
-    private void createWriters(BufferedWriter[] writers, String[] columnNames, int[] lengths)
-    {
-        try {
-            File dir = new File(rootDirName+seperator+clusterName+seperator+databaseName+seperator+tableName);
-            for (int i=0;i<columnNames.length;i++)
-            {
-                String name = columnNames[i];
-                ColumnMetaData cmd = tableMetaData.getColumnMetaData(name);
-                File file = new File(dir+seperator+cmd.getColumnName());
-                writers[i] = new BufferedWriter(new FileWriter(file));
-                lengths[i] = cmd.getMaxSize();
 
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     private void createLists(List<List<String>> writers, String[] columnNames, int[] lengths)
     {
