@@ -1,5 +1,6 @@
 import client.ColumnDBClient;
 import query.*;
+import table.Table;
 
 import java.util.List;
 
@@ -41,7 +42,13 @@ public class PersonQueryTester {
 
             List<DataContainer> dataContainers = client.queryData(countRequest);
 
-            dataContainers.stream().forEach(System.out::println);
+          //  dataContainers.stream().forEach(System.out::println);
+
+            Table table = new Table();
+
+            table.process(dataContainers);
+
+            System.out.println(table);
 
 
 
