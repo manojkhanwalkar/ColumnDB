@@ -11,6 +11,16 @@ public class CountRequest {
 
     List<Criteria> criteriaList = new ArrayList<>();
 
+    public static CountRequest duplicate(CountRequest request) {
+
+        CountRequest countRequest = new CountRequest();
+        countRequest.setDatabaseName(request.getDatabaseName());
+        countRequest.setTableName(request.getTableName());
+        countRequest.setCriteriaList(request.getCriteriaList());
+
+        return countRequest;
+    }
+
     public String getClusterName() {
         return clusterName;
     }

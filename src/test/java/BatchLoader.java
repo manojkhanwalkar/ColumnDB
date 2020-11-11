@@ -25,8 +25,6 @@ public class BatchLoader {
 
          client = ColumnDBClient.getInstance();
 
-        client.addCluster(clusterName,"localhost", 10005);
-        client.addCluster(clusterName1,"localhost",10015);
 
     }
 

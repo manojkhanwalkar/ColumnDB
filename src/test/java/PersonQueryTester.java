@@ -1,17 +1,15 @@
 import client.ColumnDBClient;
 import query.*;
 
+import java.util.List;
+
 public class PersonQueryTester {
 
     public static void main(String[] args)  throws Exception {
 
-        String clusterName = "cluster1";
-        String clusterName1 = "cluster2";
 
         ColumnDBClient client = ColumnDBClient.getInstance();
 
-        client.addCluster(clusterName,"localhost",10005);
-        client.addCluster(clusterName1,"localhost",10015);
 
 
             CountRequest countRequest = new CountRequest();
@@ -37,13 +35,13 @@ public class PersonQueryTester {
 
             }
 
-            Response response = client.query(clusterName,countRequest);
+            List<Response> responses = client.query(countRequest);
 
-            System.out.println(response.getResult());
+            responses.stream().map(resp->resp.getResult()).forEach(System.out::println);
 
-            DataContainer response1 = client.queryData(clusterName,countRequest);
+          /*  DataContainer response1 = client.queryData(countRequest);
             System.out.println(response1.getValues());
-
+*/
 
 
 

@@ -13,6 +13,13 @@ public class ColumnDBClient {
 
     private ColumnDBClient()
     {
+        String clusterName = "cluster1";
+        String clusterName1 = "cluster2";
+
+
+        addCluster(clusterName,"localhost",10005);
+        addCluster(clusterName1,"localhost",10015);
+
 
     }
 
@@ -42,7 +49,7 @@ public class ColumnDBClient {
     Map<String,HostPortTuple> hosts = new HashMap<>();
 
 
-    public void addCluster(String name , String host, int port)
+    private void addCluster(String name , String host, int port)
     {
         hosts.put(name,new HostPortTuple(host,port));
     }
@@ -122,15 +129,19 @@ public class ColumnDBClient {
 
     public List<Response> send(MetaRequest request) {
 
-        List<Response> responses = new ArrayList<>();
+        final List<Response> responses = new ArrayList<>();
 
-        hosts.keySet().stream().forEach(cluster->{
+        hosts.keySet().parallelStream().forEach(cluster->{
 
             RestConnector connector = getConnector(cluster);
 
             request.getMetaData().setClusterName(cluster);
 
-            responses.add(connector.send(request));
+            Response response = connector.send(request);
+
+            synchronized (responses) {
+                responses.add(response);
+            }
 
         });
 
@@ -149,11 +160,28 @@ public class ColumnDBClient {
 
     }
 
-    public Response query(String clusterName , CountRequest request) {
+    public List<Response> query(CountRequest request) {
 
-        RestConnector connector = getConnector(clusterName);
+        final List<Response> responses = new ArrayList<>();
+        hosts.keySet().parallelStream().forEach(cluster->{
 
-        return connector.query(request);
+            CountRequest countRequest = CountRequest.duplicate(request);
+
+            countRequest.setClusterName(cluster);
+
+            RestConnector connector = getConnector(cluster);
+
+            Response response = connector.query(countRequest);
+
+            synchronized (responses)
+            {
+                responses.add(response);
+            }
+
+
+        });
+
+       return responses;
 
     }
 
