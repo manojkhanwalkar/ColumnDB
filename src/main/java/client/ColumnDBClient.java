@@ -188,6 +188,7 @@ public class ColumnDBClient {
     public List<DataContainer> queryData(CountRequest request) {
 
         final List<DataContainer> responses = new ArrayList<>();
+
         hosts.keySet().parallelStream().forEach(cluster->{
 
             CountRequest countRequest = CountRequest.duplicate(request);
@@ -196,7 +197,7 @@ public class ColumnDBClient {
 
             RestConnector connector = getConnector(cluster);
 
-            DataContainer response = connector.queryData(request);
+            DataContainer response = connector.queryData(countRequest);
 
             synchronized (responses)
             {

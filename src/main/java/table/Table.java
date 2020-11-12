@@ -16,11 +16,12 @@ public class Table {
     {
         columnNames.addAll(dataContainers.get(0).getValues().keySet());
 
-        int size = dataContainers.get(0).getValues().values().stream().findFirst().get().size(); // size of the rows
         int cols = columnNames.size();
 
 
         dataContainers.stream().forEach(container->{
+
+            int size = container.getValues().values().stream().findFirst().get().size(); // size of the rows
 
             List<List<String>> x = new ArrayList<>();
 
