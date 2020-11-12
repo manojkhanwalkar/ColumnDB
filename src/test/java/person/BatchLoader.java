@@ -76,7 +76,7 @@ public class BatchLoader {
     String clusterName1 = "cluster2";
 
 
-    private void loadMetaData()
+    public void loadMetaData()
     {
 
 
@@ -119,7 +119,7 @@ public class BatchLoader {
 
 
 
-    private DataContainer loadData() {
+    public DataContainer loadData() {
 
 
         // read file for columns , get maxsize from metadata .
