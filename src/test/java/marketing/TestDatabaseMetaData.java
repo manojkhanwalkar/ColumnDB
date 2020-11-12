@@ -117,6 +117,51 @@ public class TestDatabaseMetaData {
         }
 
 
+    @Test public void addColumn() {
+
+        addoRDeleteColumn(MetaRequestType.AddColumn);
+    }
+
+    @Test public void deleteColumn() {
+        addoRDeleteColumn(MetaRequestType.DeleteColumn);
+
+
+    }
+
+        private void addoRDeleteColumn(MetaRequestType type)
+        {
+
+            ColumnDBClient client = ColumnDBClient.getInstance();
+
+            String[] columns = { "test" , "test1"  } ;
+            int[] sizes = { 10, 20 } ;
+
+                MetaRequest meta = new MetaRequest();
+                meta.setType(type);
+
+                TableMetaData tableMetaData = new TableMetaData();
+                tableMetaData.setDatabaseName(databaseName);
+                tableMetaData.setTableName(tableName);
+
+
+            for (int i=0;i<columns.length;i++) {
+
+                addColumn(columns[i], sizes[i], tableMetaData);
+            }
+
+
+            meta.setMetaData(tableMetaData);
+
+                client.send(meta);
+
+
+
+
+            }
+
+
+
+
         private void addColumn(String name , int size , TableMetaData tableMetaData) {
 
             ColumnMetaData metadata = new ColumnMetaData();

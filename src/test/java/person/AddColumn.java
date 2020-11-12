@@ -10,7 +10,6 @@ import query.TableMetaData;
 public class AddColumn {
 
 
-    static ObjectMapper mapper = new ObjectMapper();
 
     public static void main(String[] args)  throws Exception {
 
