@@ -131,7 +131,7 @@ public class ColumnDBClient {
 
         final List<Response> responses = new ArrayList<>();
 
-        hosts.keySet().parallelStream().forEach(cluster->{
+        hosts.keySet().stream().forEach(cluster->{
 
             RestConnector connector = getConnector(cluster);
 
