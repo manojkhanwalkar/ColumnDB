@@ -2,6 +2,7 @@ package zookeeper;
 
 
 import client.HostPortTuple;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import org.apache.zookeeper.*;
@@ -10,6 +11,7 @@ import org.apache.zookeeper.data.Stat;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -22,6 +24,9 @@ public class ZKClient {
     private ZKUtil zkUtil = new ZKUtil();
 
     final CountDownLatch connectedSignal = new CountDownLatch(1);
+
+    ObjectMapper mapper = new ObjectMapper();
+
 
     // Method to connect zookeeper ensemble.
     public ZooKeeper connect(String host) throws IOException, InterruptedException {
@@ -47,28 +52,50 @@ public class ZKClient {
         zoo.close();
     }
 
-    public void register(String name, String data)
+    public void register(String name, HostPortTuple tuple)
     {
         try {
             String path = parentPath+"/"+name;
             if (!exists(path))
-                create(path, data.getBytes());
+                create(path, tuple);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+    }
+
+    public List<HostPortTuple> get(String name)
+    {
+        List<HostPortTuple> hosts = new ArrayList<>();
+        try {
+            List<String> children = zoo.getChildren(parentPath, false);
+            for(int k = 0; k < children.size(); k++) {
+
+                byte[] b = zoo.getData(parentPath+"/"+children.get(k),false,null);
+                String s = new String(b, Charsets.UTF_8);
+                HostPortTuple hpt = mapper.readValue(s,HostPortTuple.class);
+
+                hosts.add(hpt);
+
+            }
         } catch (KeeperException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         }
-    }
 
-    public void get(String name)
-    {
-        //TODO - get all children nodes below the parent and the data associated with them.
+        return hosts;
+
     }
 
 
     // Method to create znode in zookeeper ensemble
-    private void create(String path, byte[] data) throws
-            KeeperException, InterruptedException {
+    private void create(String path, HostPortTuple tuple) throws
+            Exception {
+
+        byte[] data = mapper.writeValueAsString(tuple).getBytes(Charsets.UTF_8);
         zoo.create(path, data, ZooDefs.Ids.OPEN_ACL_UNSAFE,
                 CreateMode.PERSISTENT);
     }
@@ -105,8 +132,8 @@ public class ZKClient {
         String clusterName1 = "cluster2";
 
 
-        HostPortTuple tuple1 = new HostPortTuple("localhost",10005);
-        HostPortTuple tuple2 = new HostPortTuple("localhost",10015);
+        HostPortTuple tuple1 = new HostPortTuple(clusterName,"localhost",10005);
+        HostPortTuple tuple2 = new HostPortTuple(clusterName1,"localhost",10015);
 
         connect("localhost");
 
@@ -114,13 +141,12 @@ public class ZKClient {
 
         create(parentPath, null);
 
-        ObjectMapper mapper = new ObjectMapper();
 
 
 
-        register("cluster1", mapper.writeValueAsString(tuple1));
+        register("cluster1", tuple1);
 
-        register("cluster2", mapper.writeValueAsString(tuple2));
+        register("cluster2", tuple2);
 
 
         // watchNode(zoo,parentPath);
@@ -150,14 +176,7 @@ public class ZKClient {
         System.out.println();
 
 
-/*        byte[] bn = zoo.getData(path,
-                false, null);
-        String str = new String(bn,
-                "UTF-8");
-        System.out.println(str);
 
-
-     */
 
         zoo.close();
 

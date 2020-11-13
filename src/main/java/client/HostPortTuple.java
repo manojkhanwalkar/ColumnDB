@@ -4,10 +4,12 @@ public class HostPortTuple
 {
     String host;
     int port;
+    String name;
 
-    public HostPortTuple(String host, int port) {
+    public HostPortTuple(String name , String host, int port) {
         this.host = host;
         this.port = port;
+        this.name = name;
     }
 
     public String getHost() {
@@ -29,11 +31,20 @@ public class HostPortTuple
     public HostPortTuple() {
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     public String toString() {
         return "HostPortTuple{" +
                 "host='" + host + '\'' +
                 ", port=" + port +
+                ", name='" + name + '\'' +
                 '}';
     }
 }

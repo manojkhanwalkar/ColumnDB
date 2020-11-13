@@ -28,3 +28,7 @@ Adjust the path entries in these files to point to the configuration and configu
 
 The data is laid out on the nodes in the cluster in column format. A separate file is created per column. 
 The position in the column file determines which row the various column values belong to. 
+
+Dependencies
+1. Requires Zookeeper - the nodes will bind to zookeeper under /columnDB 
+2. The client picks up the servers from zookeeper and gets the name , host and port values to connect to.

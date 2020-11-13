@@ -1,7 +1,9 @@
 package client;
 
 import query.*;
+import zookeeper.ZKClient;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,16 +11,27 @@ import java.util.Map;
 
 public class ColumnDBClient {
 
+    public static final String parentPath = "/columnDB";
+
     ThreadLocal<Map<String,RestConnector>> localConnector = new ThreadLocal<>();
 
     private ColumnDBClient()
     {
-        String clusterName = "cluster1";
-        String clusterName1 = "cluster2";
+        /*String clusterName = "cluster1";
+        String clusterName1 = "cluster2";*/
 
+        ZKClient client = new ZKClient();
+        try {
+            client.connect("localhost");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-        addCluster(clusterName,"localhost",10005);
-        addCluster(clusterName1,"localhost",10015);
+        List<HostPortTuple> tuples = client.get(parentPath);
+
+        tuples.forEach(t->addCluster(t.getName(), t.getHost(), t.getPort()));
 
 
     }
@@ -40,7 +53,7 @@ public class ColumnDBClient {
 
     private void addCluster(String name, String host, int port)
     {
-        hosts.put(name,new HostPortTuple(host,port));
+        hosts.put(name,new HostPortTuple(name,host,port));
     }
 
 
