@@ -44,7 +44,7 @@ public class DBUtil {
 
     public static void main(String[] args) {
 
-        String start = "/tmp/cluster1";
+   /*     String start = "/tmp/cluster1";
 
         getDatabases(start).stream().forEach(db->{
             String startdb = start+ seperator+db;
@@ -77,7 +77,7 @@ public class DBUtil {
 
             });
 
-        });
+        });*/
 
 
     }

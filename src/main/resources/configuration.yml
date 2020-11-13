@@ -11,4 +11,4 @@ server:
 messages:
   hello: Hello world!
   rootDir: /tmp
-  name: cluster1
+  clusterName: cluster1

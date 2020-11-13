@@ -3,12 +3,14 @@ package rest;
 
 import com.codahale.metrics.health.HealthCheck;
 
+import static rest.ColumnResource.seperator;
+
 public class AppHealthCheck extends HealthCheck
 
 
 {
 
-    ServerIntegrityCheck integrityCheck = new ServerIntegrityCheck();
+    ServerIntegrityCheck integrityCheck = new ServerIntegrityCheck(ColumnResource.rootDirName+seperator+ColumnResource.clusterName);
 
     protected com.codahale.metrics.health.HealthCheck.Result check() throws Exception
     {
