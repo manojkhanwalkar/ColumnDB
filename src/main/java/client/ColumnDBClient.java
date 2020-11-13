@@ -35,21 +35,10 @@ public class ColumnDBClient {
 
     }
 
-    static class HostPortTuple
-    {
-        String host;
-        int port;
-
-        public HostPortTuple(String host, int port) {
-            this.host = host;
-            this.port = port;
-        }
-    }
-
     Map<String,HostPortTuple> hosts = new HashMap<>();
 
 
-    private void addCluster(String name , String host, int port)
+    private void addCluster(String name, String host, int port)
     {
         hosts.put(name,new HostPortTuple(host,port));
     }
@@ -84,8 +73,6 @@ public class ColumnDBClient {
 
 
 
-    //TODO - send in parallel to all clusters
-    //TODO - break the request into chunks based on data container size and then send a chunk to one server.
     public List<Response> send( Request request) {
 
         RequestChunker chunker = new RequestChunker(request,BatchSize);
