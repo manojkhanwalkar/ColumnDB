@@ -25,4 +25,14 @@ public class MessagesConfiguration {
     public void setRootDir(String rootDir) {
         this.rootDir = rootDir;
     }
+
+    @NotNull private String clusterName;
+
+    public String getClusterName() {
+        return clusterName;
+    }
+
+    public void setClusterName(String clusterName) {
+        this.clusterName = clusterName;
+    }
 }

@@ -27,8 +27,10 @@ public class ColumnApplication extends Application<ExampleServiceConfiguration> 
         // nothing to do yet
 
 
-        final ColumnResource resource = new ColumnResource(configuration.getMessages().getRootDir());
+        final ColumnResource resource = new ColumnResource(configuration.getMessages().getRootDir(), configuration.getMessages().getClusterName());
         environment.jersey().register(resource);
+        environment.healthChecks().register("APIHealthCheck", new AppHealthCheck());
+
     }
 
 }

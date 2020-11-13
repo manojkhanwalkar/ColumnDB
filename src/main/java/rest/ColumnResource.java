@@ -18,16 +18,18 @@ import java.io.*;
 public class ColumnResource {
 
 
-     public static  String rootDirName ;
+    public static  String rootDirName ;
+    public static  String clusterName ;
+    public  static final String seperator = "/";
 
-    public ColumnResource(String rootDirName) {
+    public ColumnResource(String rootDirName, String clusterName) {
 
         this.rootDirName = rootDirName;
+        this.clusterName = clusterName;
     }
 
 
 
-   public  static final String seperator = "/";
 
     static ObjectMapper mapper = new ObjectMapper();
 
