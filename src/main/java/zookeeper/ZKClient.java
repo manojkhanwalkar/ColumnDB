@@ -137,16 +137,16 @@ public class ZKClient {
 
         connect("localhost");
 
-        delete(parentPath);
+      //  delete(parentPath);
 
-        create(parentPath, null);
-
-
+      //  create(parentPath, null);
 
 
-        register("cluster1", tuple1);
 
-        register("cluster2", tuple2);
+
+     /*   register("cluster1", tuple1);
+
+        register("cluster2", tuple2);*/
 
 
         // watchNode(zoo,parentPath);

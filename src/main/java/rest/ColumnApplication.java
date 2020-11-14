@@ -1,8 +1,11 @@
 package rest;
 
 import io.dropwizard.Application;
+import io.dropwizard.jetty.HttpConnectorFactory;
+import io.dropwizard.server.DefaultServerFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.eclipse.jetty.server.HttpConnectionFactory;
 
 public class ColumnApplication extends Application<ExampleServiceConfiguration> {
 
@@ -19,6 +22,8 @@ public class ColumnApplication extends Application<ExampleServiceConfiguration> 
     @Override
     public void initialize(Bootstrap<ExampleServiceConfiguration> bootstrap) {
         // nothing to do yet
+
+        System.out.println(bootstrap);
     }
 
     @Override
@@ -26,8 +31,15 @@ public class ColumnApplication extends Application<ExampleServiceConfiguration> 
                     Environment environment) {
         // nothing to do yet
 
+        var factory = ((HttpConnectorFactory) ((DefaultServerFactory)configuration.getServerFactory()).getApplicationConnectors().get(0));
 
-        final ColumnResource resource = new ColumnResource(configuration.getMessages().getRootDir(), configuration.getMessages().getClusterName());
+        String host = factory.getBindHost();
+        if (host==null)
+            host="localhost";
+
+        int port = factory.getPort();
+        
+        final ColumnResource resource = new ColumnResource(configuration.getMessages().getRootDir(), configuration.getMessages().getClusterName(), host,port);
         environment.jersey().register(resource);
         environment.healthChecks().register("APIHealthCheck", new AppHealthCheck());
 

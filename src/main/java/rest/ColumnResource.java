@@ -1,8 +1,10 @@
 package rest;
 
+import client.HostPortTuple;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import query.*;
+import zookeeper.ZKClient;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -22,10 +24,24 @@ public class ColumnResource {
     public static  String clusterName ;
     public  static final String seperator = "/";
 
-    public ColumnResource(String rootDirName, String clusterName) {
+    public static final String zkParentPath = "/columnDB";
+
+    ZKClient zkClient = new ZKClient();
+
+    public ColumnResource(String rootDirName, String clusterName, String host, int port) {
 
         this.rootDirName = rootDirName;
         this.clusterName = clusterName;
+
+        try {
+            zkClient.connect("localhost");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        zkClient.register(clusterName, new HostPortTuple(clusterName,host,port));
     }
 
 
