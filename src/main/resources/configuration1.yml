@@ -9,5 +9,5 @@ server:
       port: 10082
 messages:
   hello: Hello world!
-  rootDir: /tmp
+  rootDir: /home/manoj/data/ColumnDB
   clusterName: cluster2

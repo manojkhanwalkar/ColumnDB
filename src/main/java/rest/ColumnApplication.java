@@ -10,9 +10,6 @@ import org.eclipse.jetty.server.HttpConnectionFactory;
 public class ColumnApplication extends Application<ExampleServiceConfiguration> {
 
 
-  /*  public static void main(String[] args) throws Exception {
-        new HelloWorldApplication().run("server", "/Users/mkhanwalkar/GraphDB/src/main/java/trial/rest/configuration.yml");
-    }*/
 
     @Override
     public String getName() {
@@ -23,7 +20,7 @@ public class ColumnApplication extends Application<ExampleServiceConfiguration> 
     public void initialize(Bootstrap<ExampleServiceConfiguration> bootstrap) {
         // nothing to do yet
 
-        System.out.println(bootstrap);
+
     }
 
     @Override

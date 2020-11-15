@@ -28,7 +28,7 @@ public class SampleDataCreatorForActivity {
 
         try {
 
-            PrintWriter writer = new PrintWriter("/tmp/activity.csv");
+            PrintWriter writer = new PrintWriter("/home/manoj/data/ColumnDB/activity.csv");
             writer.write("userid,campaignid,clickid,seen,clicked,purchased\n");
 
             for (int i=0;i<10000;i++) {

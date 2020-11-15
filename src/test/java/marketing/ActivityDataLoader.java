@@ -16,7 +16,7 @@ public class ActivityDataLoader {
 
     public static void main(String[] args) {
 
-        BatchLoader loader = new BatchLoader("/tmp/activity.csv", "marketing", "activity");
+        BatchLoader loader = new BatchLoader("/home/manoj/data/ColumnDB/activity.csv", "marketing", "activity");
 
 
         loader.loadMetaData();

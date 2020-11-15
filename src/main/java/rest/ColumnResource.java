@@ -28,6 +28,8 @@ public class ColumnResource {
 
     ZKClient zkClient = new ZKClient();
 
+    DBLocks locks ;
+
     public ColumnResource(String rootDirName, String clusterName, String host, int port) {
 
         this.rootDirName = rootDirName;
@@ -42,6 +44,10 @@ public class ColumnResource {
         }
 
         zkClient.register(clusterName, new HostPortTuple(clusterName,host,port));
+
+        locks = DBLocks.getInstance();
+
+        locks.createLocks(rootDirName+"/"+clusterName);
     }
 
 

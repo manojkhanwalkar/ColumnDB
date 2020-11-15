@@ -10,5 +10,5 @@ server:
       port: 10081
 messages:
   hello: Hello world!
-  rootDir: /tmp
+  rootDir: /home/manoj/data/ColumnDB
   clusterName: cluster1

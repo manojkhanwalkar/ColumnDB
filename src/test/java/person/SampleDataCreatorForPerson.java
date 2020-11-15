@@ -26,7 +26,7 @@ public class SampleDataCreatorForPerson {
 
         try {
 
-            PrintWriter writer = new PrintWriter("/tmp/person.csv");
+            PrintWriter writer = new PrintWriter("/home/manoj/data/ColumnDB/person.csv");
             writer.write("age,gender,zip,income,state\n");
 
             for (int i=0;i<10000;i++) {

@@ -29,7 +29,7 @@ public class CSVLoader {
 
     public static void main(String[] args) {
 
-        CSVLoader loader = new CSVLoader("/tmp","cluster1","demo","person","/tmp/person.csv");
+        CSVLoader loader = new CSVLoader("/home/manoj/data/ColumnDB","cluster1","demo","person","/tmp/person.csv");
 
         loader.loadMetaData();
         loader.loadData();

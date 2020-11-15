@@ -69,7 +69,7 @@ public class BatchLoader {
 
     String[] spaces;
 
-    static String rootDirName = "/tmp";
+    static String rootDirName = "/home/manoj/data/ColumnDB";
     static String seperator = "/";
 
     String clusterName = "cluster1";
