@@ -24,7 +24,7 @@ public class CreateDatabase {
             meta.setType(MetaRequestType.CreateDatabase);
 
             TableMetaData tableMetaData = new TableMetaData();
-            tableMetaData.setDatabaseName("mydb");
+            tableMetaData.setDatabaseName("demo");
 
             meta.setMetaData(tableMetaData);
 

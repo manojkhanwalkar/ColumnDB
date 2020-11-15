@@ -25,7 +25,7 @@ public class DBLocks {
         locks = new ConcurrentHashMap<>();
     }
 
-    ConcurrentMap<String,ConcurrentMap<String, ReadWriteLock> >locks ;
+    ConcurrentMap<String,ConcurrentMap<String, ReadWriteLock>>locks ;
 
     public void createLocks(String dir) {
         // get all databases and for each database get all tables .
