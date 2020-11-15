@@ -48,6 +48,8 @@ public class ColumnResource {
         locks = DBLocks.getInstance();
 
         locks.createLocks(rootDirName+"/"+clusterName);
+
+        System.out.println(locks);
     }
 
 
