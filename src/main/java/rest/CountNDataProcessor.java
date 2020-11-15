@@ -8,6 +8,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
 
 import static rest.ColumnResource.rootDirName;
 import static rest.ColumnResource.seperator;
@@ -46,39 +48,59 @@ public class CountNDataProcessor {
 
     public DataContainer processData()
     {
-        DataContainer response = new DataContainer();
-        processCount();  // gets the positions .
-        // for each column , read file , check data against positions and create a list of column results .
+        ReadWriteLock lock = null;
+        try {
 
-        tableMetaData.getColumns().values().stream().forEach(col->{
+            lock = DBLocks.getInstance().get(dataBaseName,tableName);
 
-            StringBuilder data = readFile(rootDirName+seperator+clusterName+seperator+dataBaseName+seperator+tableName+seperator+col.getColumnName());
-            int size = col.getMaxSize();
-            List<String> colResults = new ArrayList<String>();
-            for (int i=0;i<positions.length;i++)
-            {
-                if (positions[i]==0)
-                    continue;
-
-                int start = i*size;
-                String s = data.substring(start,start+size);
-
-                colResults.add(s);
-
-            }
-
-            response.addValues(col.getColumnName(),colResults);
+            lock.readLock().lock();
 
 
-        });
+            DataContainer response = new DataContainer();
+            processCount();  // gets the positions .
+            // for each column , read file , check data against positions and create a list of column results .
 
-        return response;
+            tableMetaData.getColumns().values().stream().forEach(col -> {
+
+                StringBuilder data = readFile(rootDirName + seperator + clusterName + seperator + dataBaseName + seperator + tableName + seperator + col.getColumnName());
+                int size = col.getMaxSize();
+                List<String> colResults = new ArrayList<String>();
+                for (int i = 0; i < positions.length; i++) {
+                    if (positions[i] == 0)
+                        continue;
+
+                    int start = i * size;
+                    String s = data.substring(start, start + size);
+
+                    colResults.add(s);
+
+                }
+
+                response.addValues(col.getColumnName(), colResults);
+
+
+            });
+
+            return response;
+
+        } finally {
+            if (lock!=null)
+                lock.readLock().unlock();
+
+        }
     }
 
 
     public Response processCount() {
 
-        Response response = new Response();
+        ReadWriteLock lock = null;
+        try {
+
+            lock = DBLocks.getInstance().get(dataBaseName,tableName);
+
+            lock.readLock().lock();
+
+            Response response = new Response();
 
 
         request.getCriteriaList().stream().forEach(criteria->{
@@ -94,6 +116,12 @@ public class CountNDataProcessor {
 
         response.setResult("Count matching the condition is " + count);
         return response ;
+
+        } finally {
+            if (lock!=null)
+                lock.readLock().unlock();
+
+        }
     }
 
 

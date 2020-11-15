@@ -3,11 +3,13 @@ package rest;
 import query.ColumnMetaData;
 import query.DataContainer;
 import query.Request;
+import query.Response;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.concurrent.locks.ReadWriteLock;
 
 import static rest.ColumnResource.seperator;
 
@@ -36,7 +38,15 @@ public class DataWriter {
 
     public void write()
     {
-        DataContainer container = request.getDataContainer();
+        ReadWriteLock lock = null;
+        try {
+
+            lock = DBLocks.getInstance().get(databaseName,tableName);
+
+            lock.writeLock().lock();
+
+
+            DataContainer container = request.getDataContainer();
         container.getValues().entrySet().parallelStream().forEach(ent->{
 
             String name = ent.getKey();
@@ -52,6 +62,12 @@ public class DataWriter {
             }
 
         });
+
+    } finally {
+        if (lock!=null)
+            lock.writeLock().unlock();
+
+    }
     }
 
 }

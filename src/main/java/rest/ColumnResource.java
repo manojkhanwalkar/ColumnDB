@@ -14,6 +14,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.io.*;
+import java.util.concurrent.locks.ReadWriteLock;
 
 @Path("/columndb")
 @Produces(MediaType.APPLICATION_JSON)
@@ -88,7 +89,7 @@ public class ColumnResource {
     @POST
     public Response batch(@Valid Request request) {
 
-        System.out.println(request);
+
 
         DataWriter writer = new DataWriter(request,rootDirName);
 
@@ -110,10 +111,9 @@ public class ColumnResource {
     @POST
     public MetaResponse metaQuery(@Context HttpServletRequest hsReq, @Valid String clusterName) {
 
+
+
         MetaResponse metaResponse = new MetaResponse();
-
-
-        System.out.println(clusterName);
 
         File dir = new File(rootDirName+seperator+clusterName);
 
@@ -142,6 +142,7 @@ public class ColumnResource {
 
         return metaResponse;
 
+
     }
 
     private  void processDatabase(File database, ClusterMetaData clusterMD, String clusterName) {
@@ -166,10 +167,11 @@ public class ColumnResource {
 
 
 
+/* synchronized added here to prevent two meta changes from happening at the same time */
 
     @Path("/meta")
     @POST
-    public Response meta(@Context HttpServletRequest hsReq, @Valid MetaRequest request) {
+    public synchronized Response meta(@Context HttpServletRequest hsReq, @Valid MetaRequest request) {
 
 
         Response response=null;
@@ -186,79 +188,107 @@ public class ColumnResource {
         switch (request.getType())
         {
             case CreateDatabase:
+                DBLocks.getInstance().createLock(databaseName);
                 createDirs(clusterName,databaseName,null);
                 return response;
 
             case DeleteDatabase:
                 deleteDatabaseDirs(clusterName,databaseName);
+                DBLocks.getInstance().deleteLock(databaseName);
                 return response;
             case DeleteTable:
                 deleteTableDir(clusterName,databaseName,tableName);
+                DBLocks.getInstance().deleteLock(databaseName,tableName);
                 return response;
             case DeleteColumn: {
 
-                String metaFile = rootDirName+seperator+clusterName+seperator+databaseName+seperator+tableName+seperator+tableName+".meta";
-
-                TableMetaData combined = TableMetaData.removeColumns(TableMetaData.fromJSONString(metaFile),tableMetaData);
-
+                ReadWriteLock lock=null;
                 try {
-                    String s = mapper.writeValueAsString(combined);
+                    lock = DBLocks.getInstance().get(databaseName, tableName);
+                    lock.writeLock().lock();
+                    String metaFile = rootDirName + seperator + clusterName + seperator + databaseName + seperator + tableName + seperator + tableName + ".meta";
 
-                    FileWriter writer = new FileWriter(rootDirName+seperator+clusterName+seperator+databaseName+seperator+tableName+seperator+tableName+".meta");
-                    BufferedWriter metaFileWriter = new BufferedWriter(writer);
-                    metaFileWriter.write(s);
-                    metaFileWriter.flush();
-                    metaFileWriter.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    TableMetaData combined = TableMetaData.removeColumns(TableMetaData.fromJSONString(metaFile), tableMetaData);
+
+                    try {
+                        String s = mapper.writeValueAsString(combined);
+
+                        FileWriter writer = new FileWriter(rootDirName + seperator + clusterName + seperator + databaseName + seperator + tableName + seperator + tableName + ".meta");
+                        BufferedWriter metaFileWriter = new BufferedWriter(writer);
+                        metaFileWriter.write(s);
+                        metaFileWriter.flush();
+                        metaFileWriter.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    File dir = new File(rootDirName + seperator + clusterName + seperator + databaseName + seperator + tableName);
+                    tableMetaData.getColumns().values().stream().forEach(cmd -> {
+
+
+                        File file = new File(dir + seperator + cmd.getColumnName());
+                        file.delete();
+                    });
+
+                    return response;
+
+                } finally {
+                    if (lock!=null)
+                    {
+                        lock.writeLock().unlock();
+                    }
                 }
-
-                File dir = new File(rootDirName + seperator + clusterName + seperator + databaseName + seperator + tableName);
-                tableMetaData.getColumns().values().stream().forEach(cmd -> {
-
-
-                    File file = new File(dir + seperator + cmd.getColumnName());
-                    file.delete();
-                });
-
-                return response;
             }
 
 
             case AddColumn: {
-                createDirs(clusterName, databaseName, tableName);
-                File dir = new File(rootDirName + seperator + clusterName + seperator + databaseName + seperator + tableName);
-                tableMetaData.getColumns().values().stream().forEach(cmd -> {
+
+                ReadWriteLock lock=null;
+                try {
+                    lock = DBLocks.getInstance().get(databaseName, tableName);
+                    lock.writeLock().lock();
+                    createDirs(clusterName, databaseName, tableName);
+                    File dir = new File(rootDirName + seperator + clusterName + seperator + databaseName + seperator + tableName);
+                    tableMetaData.getColumns().values().stream().forEach(cmd -> {
 
 
-                    File file = new File(dir + seperator + cmd.getColumnName());
+                        File file = new File(dir + seperator + cmd.getColumnName());
+                        try {
+                            file.createNewFile();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+
+                    String metaFile = rootDirName + seperator + clusterName + seperator + databaseName + seperator + tableName + seperator + tableName + ".meta";
+
+                    TableMetaData combined = TableMetaData.addColumns(TableMetaData.fromJSONString(metaFile), tableMetaData);
+
                     try {
-                        file.createNewFile();
+                        String s = mapper.writeValueAsString(combined);
+
+                        FileWriter writer = new FileWriter(rootDirName + seperator + clusterName + seperator + databaseName + seperator + tableName + seperator + tableName + ".meta");
+                        BufferedWriter metaFileWriter = new BufferedWriter(writer);
+                        metaFileWriter.write(s);
+                        metaFileWriter.flush();
+                        metaFileWriter.close();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                });
 
-                String metaFile = rootDirName+seperator+clusterName+seperator+databaseName+seperator+tableName+seperator+tableName+".meta";
 
-                TableMetaData combined = TableMetaData.addColumns(TableMetaData.fromJSONString(metaFile),tableMetaData);
+                    return response;
 
-                try {
-                    String s = mapper.writeValueAsString(combined);
-
-                    FileWriter writer = new FileWriter(rootDirName+seperator+clusterName+seperator+databaseName+seperator+tableName+seperator+tableName+".meta");
-                    BufferedWriter metaFileWriter = new BufferedWriter(writer);
-                    metaFileWriter.write(s);
-                    metaFileWriter.flush();
-                    metaFileWriter.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } finally {
+                    if (lock!=null)
+                    {
+                        lock.writeLock().unlock();
+                    }
                 }
-
-
-                return response;
             }
             case CreateTable:
+                DBLocks.getInstance().createLock(databaseName,tableName);
+
 
                 createDirs(clusterName,databaseName,tableName);
 
@@ -302,36 +332,36 @@ public class ColumnResource {
 
     private  void processTable(File table, DatabaseMetaData databaseMD, String clusterName) {
 
+        ReadWriteLock lock = null;
+        try {
+
+            lock = DBLocks.getInstance().get(databaseMD.getName(), table.getName());
+
+            lock.readLock().lock();
+
+            TableMetaData tableMetaData = null;
+            try {
+                FileReader reader = new FileReader(rootDirName + seperator + clusterName + seperator + databaseMD.getName() + seperator + table.getName() + seperator + table.getName() + ".meta");
+                BufferedReader metaFileReader = new BufferedReader(reader);
+                String s = metaFileReader.readLine();
+
+                tableMetaData = mapper.readValue(s, TableMetaData.class);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            // System.out.println(tableMetaData);
 
 
-        String[] metaFile = table.list(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
+            // read meta file into
+            databaseMD.addTableMetaData(tableMetaData);
 
-                if (name.endsWith(".meta"))
-                    return true;
-                else
-                    return false;
+        } finally{
+
+            if (lock!=null)
+                lock.readLock().unlock();
 
             }
-        });
-
-        TableMetaData tableMetaData = null;
-        try {
-            FileReader reader = new FileReader(rootDirName+seperator+clusterName+seperator+databaseMD.getName()+seperator+table.getName()+seperator+table.getName()+".meta");
-            BufferedReader metaFileReader = new BufferedReader(reader);
-            String s = metaFileReader.readLine();
-
-            tableMetaData = mapper.readValue(s, TableMetaData.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // System.out.println(tableMetaData);
-
-
-        // read meta file into
-        databaseMD.addTableMetaData(tableMetaData);
 
 
     }
