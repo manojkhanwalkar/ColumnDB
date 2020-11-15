@@ -43,6 +43,7 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-web:5.2.10.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: javax.validation:validation-api:2.0.1.Final" level="project" />
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.15" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-pool2:2.9.0" level="project" />
     <orderEntry type="library" name="Maven: io.dropwizard:dropwizard-core:2.0.15" level="project" />
     <orderEntry type="library" name="Maven: io.dropwizard:dropwizard-util:2.0.15" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava:30.0-jre" level="project" />

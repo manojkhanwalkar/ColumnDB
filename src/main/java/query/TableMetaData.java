@@ -121,7 +121,7 @@ public class TableMetaData {
     @Override
     public String toString() {
         return "TableMetaData{" +
-                ", databaseName='" + databaseName + '\'' +
+                " databaseName='" + databaseName + '\'' +
                 ", tableName='" + tableName + '\'' +
                 ", columns=" + columns +
                 '}';
