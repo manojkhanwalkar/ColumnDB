@@ -1,7 +1,10 @@
 package rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
 import query.*;
+import rest.pool.BRKeyedPoolFactory;
+import rest.pool.ColumnReader;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -42,6 +45,7 @@ public class CountNDataProcessor {
         this.tableName = request.getTableName();
 
         this.request = request;
+        pool = new GenericKeyedObjectPool<>(new BRKeyedPoolFactory());
 
         loadMetaData();
     }
@@ -243,7 +247,7 @@ public class CountNDataProcessor {
 
     }
 
-    private  StringBuilder readFile( String name) {
+    /*private  StringBuilder readFile( String name) {
 
         try {
             FileReader reader = new FileReader(name);
@@ -254,6 +258,32 @@ public class CountNDataProcessor {
 
             return new StringBuilder(s);
         } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+
+    }*/
+
+    private GenericKeyedObjectPool<String, ColumnReader> pool;
+      private  StringBuilder readFile( String name) {
+
+        try {
+ //           FileReader reader = new FileReader(name);
+   //         BufferedReader metaFileReader = new BufferedReader(reader);
+
+            ColumnReader reader = pool.borrowObject(name); //pool.computeIfAbsent(name,k->new GenericObjectPool<>(new BRPoolFactory(name))).borrowObject();
+
+            BufferedReader metaFileReader = reader.getBufferedReader();
+
+
+            String s=  metaFileReader.readLine();
+          //  metaFileReader.close();
+
+            pool.returnObject(name,reader);
+
+            return new StringBuilder(s);
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }

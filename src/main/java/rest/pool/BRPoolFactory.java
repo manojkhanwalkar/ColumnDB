@@ -10,6 +10,11 @@ public class BRPoolFactory extends  BasePooledObjectFactory<ColumnReader>  {
 
     String name;
 
+        public BRPoolFactory()
+        {
+
+        }
+
         public BRPoolFactory(String name) {
 
           this.name = name;
@@ -43,9 +48,18 @@ public class BRPoolFactory extends  BasePooledObjectFactory<ColumnReader>  {
             }
         }
 
+    @Override
+    public void destroyObject(PooledObject<ColumnReader> p) throws Exception {
+        super.destroyObject(p);
+        p.getObject().getBufferedReader().close();
+    }
 
+    @Override
+    public void activateObject(PooledObject<ColumnReader> p) throws Exception {
+        super.activateObject(p);
+    }
 
-        // for all other methods, the no-op implementation
+    // for all other methods, the no-op implementation
         // in BasePooledObjectFactory will suffice
     }
 

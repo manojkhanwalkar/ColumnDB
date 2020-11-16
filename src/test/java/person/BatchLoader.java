@@ -31,7 +31,7 @@ public class BatchLoader {
 
     public static void main(String[] args) {
 
-        BatchLoader loader = new BatchLoader("/tmp/person.csv", "demo", "person");
+        BatchLoader loader = new BatchLoader("/home/manoj/data/ColumnDB/person.csv", "demo", "person");
 
 
         loader.loadMetaData();
