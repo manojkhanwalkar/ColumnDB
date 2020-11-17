@@ -69,18 +69,57 @@ public class RestConnector  {
         return response1.getBody();
     }
 
-    public Response query(CountRequest request) {
-        HttpEntity<CountRequest> requestEntity = new HttpEntity<>(request);
-        ResponseEntity<Response> response1 = restTemplate.exchange("http://" + host + ":" + port +  "/columndb/countquery", HttpMethod.POST, requestEntity, Response.class);
+    static final int RetryCount = 100;
 
-        return response1.getBody();
+    public Response query(CountRequest request) {
+
+
+        HttpEntity<CountRequest> requestEntity = new HttpEntity<>(request);
+        int secs = 1;
+        for (int i=0;i<RetryCount;i++) {
+            try {
+                ResponseEntity<Response> response1 = restTemplate.exchange("http://" + host + ":" + port + "/columndb/countquery", HttpMethod.POST, requestEntity, Response.class);
+
+                return response1.getBody();
+
+            } catch (Exception ex)
+            {
+                System.out.println("Service not available , trying again in " + secs);
+                try {
+                    Thread.sleep(secs*1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                secs = 2*secs;
+            }
+        }
+
+        return null;
     }
+
+
 
     public DataContainer queryData(CountRequest request) {
         HttpEntity<CountRequest> requestEntity = new HttpEntity<>(request);
-        ResponseEntity<DataContainer> response1 = restTemplate.exchange("http://" + host + ":" + port +  "/columndb/dataquery", HttpMethod.POST, requestEntity, DataContainer.class);
 
-        return response1.getBody();
+        int secs = 1;
+        for (int i=0;i<RetryCount;i++) {
+            try {
+                    ResponseEntity<DataContainer> response1 = restTemplate.exchange("http://" + host + ":" + port +  "/columndb/dataquery", HttpMethod.POST, requestEntity, DataContainer.class);
+                    return response1.getBody();
+            } catch (Exception ex)
+            {
+                System.out.println("Service not available , trying again in " + secs);
+                try {
+                    Thread.sleep(secs*1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                secs = 2*secs;
+            }
+        }
+
+        return null;
     }
 
 
