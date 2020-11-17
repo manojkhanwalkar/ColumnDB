@@ -10,27 +10,14 @@
     <bean id="ServiceList" class="server.ServiceList">
         <property name="listServices">
             <list>
-                <ref bean="DBService" />
+
                 <ref bean="RestService" />
-                <!--             <ref bean="DBQueryTest" /> -->
+
             </list>
         </property>
 
     </bean>
 
-    <bean id="DBService" class="columndb.DBService">
-        <!--      <property name="location" value="/tmp/" />
-              <property name="dbNames">
-                  <list>
-                      <value>db1</value>
-                      <value>db2</value>
-                  </list>
-              </property>
-              <property name="name" value="DBService" />
-              <property name="clusterName" value="cluster1" />
-              <property name="snapShotInterval" value="5000" /> -->
-
-    </bean>
 
 
     <bean id="RestService" class="columndb.RestService">

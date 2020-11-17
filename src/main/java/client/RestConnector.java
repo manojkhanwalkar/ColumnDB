@@ -49,9 +49,25 @@ public class RestConnector  {
     public Response send(Request request)
     {
         HttpEntity<Request> requestEntity = new HttpEntity<>(request);
-        ResponseEntity<Response> response1 = restTemplate.exchange("http://" + host + ":" + port +  "/columndb/batch", HttpMethod.POST, requestEntity, Response.class);
+        int secs = 1;
+        for (int i=0;i<RetryCount;i++) {
+            try {
+                ResponseEntity<Response> response1 = restTemplate.exchange("http://" + host + ":" + port +  "/columndb/batch", HttpMethod.POST, requestEntity, Response.class);
 
-        return response1.getBody();
+                 return response1.getBody();
+            } catch (Exception ex)
+            {
+                System.out.println("Service not available , trying again in " + secs);
+                try {
+                    Thread.sleep(secs*1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                secs = 2*secs;
+            }
+        }
+
+        return null;
     }
 
     public Response send(MetaRequest request)
