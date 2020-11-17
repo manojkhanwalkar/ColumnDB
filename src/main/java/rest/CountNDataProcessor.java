@@ -5,17 +5,13 @@ import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
 import query.*;
 import rest.pool.BRKeyedPoolFactory;
 import rest.pool.ColumnReader;
+import storage.StorageManager;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.stream.Stream;
 
 import static rest.ColumnResource.rootDirName;
 import static rest.ColumnResource.seperator;
@@ -38,7 +34,7 @@ public class CountNDataProcessor {
 
     // for now number of records is hardcoded .
 
-    public CountNDataProcessor(CountRequest request)
+    public CountNDataProcessor(CountRequest request, StorageManager storageManager)
     {
         this.clusterName = request.getClusterName();
         this.dataBaseName = request.getDatabaseName();
@@ -55,12 +51,11 @@ public class CountNDataProcessor {
 
     public DataContainer processData()
     {
-        ReadWriteLock lock = null;
+        DBLocks dbLocks = DBLocks.getInstance();
         try {
 
-            lock = DBLocks.getInstance().get(dataBaseName,tableName);
+            dbLocks.lock(dataBaseName,tableName, DBLocks.Type.Read);
 
-            lock.readLock().lock();
 
 
             DataContainer response = new DataContainer();
@@ -91,8 +86,7 @@ public class CountNDataProcessor {
             return response;
 
         } finally {
-            if (lock!=null)
-                lock.readLock().unlock();
+            dbLocks.unlock(dataBaseName,tableName, DBLocks.Type.Read);
 
         }
     }
@@ -100,12 +94,10 @@ public class CountNDataProcessor {
 
     public Response processCount() {
 
-        ReadWriteLock lock = null;
+        DBLocks dbLocks = DBLocks.getInstance();
         try {
 
-            lock = DBLocks.getInstance().get(dataBaseName,tableName);
-
-            lock.readLock().lock();
+            dbLocks.lock(dataBaseName,tableName, DBLocks.Type.Read);
 
             Response response = new Response();
 
@@ -125,8 +117,7 @@ public class CountNDataProcessor {
         return response ;
 
         } finally {
-            if (lock!=null)
-                lock.readLock().unlock();
+            dbLocks.unlock(dataBaseName,tableName, DBLocks.Type.Read);
 
         }
     }

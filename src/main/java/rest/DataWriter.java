@@ -5,10 +5,7 @@ import query.DataContainer;
 import query.Request;
 import query.Response;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.concurrent.locks.ReadWriteLock;
 
 import static rest.ColumnResource.seperator;
@@ -38,12 +35,11 @@ public class DataWriter {
 
     public void write()
     {
-        ReadWriteLock lock = null;
+        DBLocks dbLocks = DBLocks.getInstance();
+
         try {
 
-            lock = DBLocks.getInstance().get(databaseName,tableName);
-
-            lock.writeLock().lock();
+            dbLocks.lock(databaseName,tableName, DBLocks.Type.Write);
 
 
             DataContainer container = request.getDataContainer();
@@ -64,9 +60,7 @@ public class DataWriter {
         });
 
     } finally {
-        if (lock!=null)
-            lock.writeLock().unlock();
-
+        dbLocks.unlock(databaseName,tableName, DBLocks.Type.Write);
     }
     }
 

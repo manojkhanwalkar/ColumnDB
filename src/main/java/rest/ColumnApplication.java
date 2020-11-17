@@ -6,6 +6,7 @@ import io.dropwizard.server.DefaultServerFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.server.HttpConnectionFactory;
+import storage.MemoryStorageManager;
 
 public class ColumnApplication extends Application<ExampleServiceConfiguration> {
 
@@ -23,6 +24,7 @@ public class ColumnApplication extends Application<ExampleServiceConfiguration> 
 
     }
 
+    //TODO - get storage manager impl from configuration or a factory
     @Override
     public void run(ExampleServiceConfiguration configuration,
                     Environment environment) {
@@ -36,7 +38,7 @@ public class ColumnApplication extends Application<ExampleServiceConfiguration> 
 
         int port = factory.getPort();
         
-        final ColumnResource resource = new ColumnResource(configuration.getMessages().getRootDir(), configuration.getMessages().getClusterName(), host,port);
+        final ColumnResource resource = new ColumnResource(configuration.getMessages().getRootDir(), configuration.getMessages().getClusterName(), host,port, new MemoryStorageManager());
         environment.jersey().register(resource);
         environment.healthChecks().register("APIHealthCheck", new AppHealthCheck());
 

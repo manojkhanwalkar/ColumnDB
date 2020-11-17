@@ -4,6 +4,7 @@ import client.HostPortTuple;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import query.*;
+import storage.StorageManager;
 import zookeeper.ZKClient;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +15,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.io.*;
-import java.util.concurrent.locks.ReadWriteLock;
 
 @Path("/columndb")
 @Produces(MediaType.APPLICATION_JSON)
@@ -31,10 +31,19 @@ public class ColumnResource {
 
     DBLocks locks ;
 
-    public ColumnResource(String rootDirName, String clusterName, String host, int port) {
+
+
+    StorageManager storageManager ;
+
+    public ColumnResource(String rootDirName, String clusterName, String host, int port, StorageManager storageManager) {
 
         this.rootDirName = rootDirName;
         this.clusterName = clusterName;
+        this.storageManager = storageManager;
+
+        storageManager.setRootDirName(rootDirName);
+        storageManager.setClusterName(clusterName);
+
 
         try {
             zkClient.connect("localhost");
@@ -50,7 +59,7 @@ public class ColumnResource {
 
         locks.createLocks(rootDirName+"/"+clusterName);
 
-        System.out.println(locks);
+
     }
 
 
@@ -62,9 +71,11 @@ public class ColumnResource {
     @POST
     public Response query(@Context HttpServletRequest hsReq, @Valid CountRequest request) {
 
-        CountNDataProcessor processor = new CountNDataProcessor(request);
+        CountNDataProcessor processor = new CountNDataProcessor(request,storageManager);
 
         Response metaResponse = processor.processCount();
+
+
 
         return metaResponse;
 
@@ -74,7 +85,7 @@ public class ColumnResource {
     @POST
     public DataContainer dataquery(@Context HttpServletRequest hsReq, @Valid CountRequest request) {
 
-        CountNDataProcessor processor = new CountNDataProcessor(request);
+        CountNDataProcessor processor = new CountNDataProcessor(request, storageManager);
 
          DataContainer metaResponse = processor.processData();
 
@@ -91,6 +102,7 @@ public class ColumnResource {
 
 
 
+        storageManager.write(request);
         DataWriter writer = new DataWriter(request,rootDirName);
 
         writer.write();
@@ -119,6 +131,8 @@ public class ColumnResource {
 
         ClusterMetaData clusterMD = new ClusterMetaData();
         clusterMD.setName(clusterName);
+
+        storageManager.populateClusterMetaData(clusterMD);
 
         for (File f : dir.listFiles()) {
             if (f.isDirectory())
@@ -184,32 +198,47 @@ public class ColumnResource {
         String databaseName = tableMetaData.getDatabaseName();
         String tableName = tableMetaData.getTableName();
 
+        var dbLocks = DBLocks.getInstance();
 
         switch (request.getType())
         {
+
             case CreateDatabase:
+
                String databasePath = rootDirName+seperator+clusterName+seperator+databaseName;
                if (!exists(databasePath)) {
-                   DBLocks.getInstance().createLock(databaseName);
+                   dbLocks.createLock(databaseName);
                    createDirs(clusterName, databaseName, null);
                }
+
+                if (!storageManager.existsDatabase(databaseName)) {
+                    dbLocks.createLock(databaseName);
+
+                    storageManager.createDatabase(databaseName);
+
+
+                }
                 return response;
 
             case DeleteDatabase:
+
                 deleteDatabaseDirs(clusterName,databaseName);
-                DBLocks.getInstance().deleteLock(databaseName);
+                storageManager.deleteDatabase(databaseName);
+                dbLocks.deleteLock(databaseName);
                 return response;
             case DeleteTable:
                 deleteTableDir(clusterName,databaseName,tableName);
-                DBLocks.getInstance().deleteLock(databaseName,tableName);
+                storageManager.deleteTable(databaseName,tableName);
+                dbLocks.deleteLock(databaseName,tableName);
                 return response;
             case DeleteColumn: {
 
-                ReadWriteLock lock=null;
+
                 try {
-                    lock = DBLocks.getInstance().get(databaseName, tableName);
-                    lock.writeLock().lock();
+                    dbLocks.lock(databaseName, tableName, DBLocks.Type.Write);
                     String metaFile = rootDirName + seperator + clusterName + seperator + databaseName + seperator + tableName + seperator + tableName + ".meta";
+
+                    storageManager.deleteColumn(databaseName,tableName,tableMetaData); //TODO - combined logic to be moved into storage manager
 
                     TableMetaData combined = TableMetaData.removeColumns(TableMetaData.fromJSONString(metaFile), tableMetaData);
 
@@ -236,20 +265,17 @@ public class ColumnResource {
                     return response;
 
                 } finally {
-                    if (lock!=null)
-                    {
-                        lock.writeLock().unlock();
-                    }
+                    dbLocks.lock(databaseName, tableName, DBLocks.Type.Write);
                 }
             }
 
 
             case AddColumn: {
 
-                ReadWriteLock lock=null;
+
                 try {
-                    lock = DBLocks.getInstance().get(databaseName, tableName);
-                    lock.writeLock().lock();
+                    dbLocks.lock(databaseName, tableName, DBLocks.Type.Write);
+
                     createDirs(clusterName, databaseName, tableName);
                     File dir = new File(rootDirName + seperator + clusterName + seperator + databaseName + seperator + tableName);
                     tableMetaData.getColumns().values().stream().forEach(cmd -> {
@@ -267,6 +293,9 @@ public class ColumnResource {
 
                     TableMetaData combined = TableMetaData.addColumns(TableMetaData.fromJSONString(metaFile), tableMetaData);
 
+                    storageManager.addColumn(databaseName,tableName,tableMetaData); //TODO - combined logic to be moved into storage manager
+
+
                     try {
                         String s = mapper.writeValueAsString(combined);
 
@@ -283,17 +312,18 @@ public class ColumnResource {
                     return response;
 
                 } finally {
-                    if (lock!=null)
-                    {
-                        lock.writeLock().unlock();
-                    }
+                    dbLocks.unlock(databaseName,tableName, DBLocks.Type.Write);
                 }
             }
             case CreateTable:
                 String tablePath = rootDirName+seperator+clusterName+seperator+databaseName+seperator+tableName;
                 if (!exists(tablePath)) {
 
-                    DBLocks.getInstance().createLock(databaseName, tableName);
+                    dbLocks.createLock(databaseName, tableName);
+
+                    dbLocks.lock(databaseName,tableName, DBLocks.Type.Write);
+
+                    storageManager.createTable(databaseName,tableName);
 
 
                     createDirs(clusterName, databaseName, tableName);
@@ -324,6 +354,8 @@ public class ColumnResource {
                         e.printStackTrace();
                     }
 
+                    dbLocks.unlock(databaseName,tableName, DBLocks.Type.Write);
+
                 }
 
                 // response   = db.query(request);
@@ -339,12 +371,11 @@ public class ColumnResource {
 
     private  void processTable(File table, DatabaseMetaData databaseMD, String clusterName) {
 
-        ReadWriteLock lock = null;
+
+        DBLocks dbLocks = DBLocks.getInstance();
         try {
 
-            lock = DBLocks.getInstance().get(databaseMD.getName(), table.getName());
-
-            lock.readLock().lock();
+            dbLocks.lock(databaseMD.getName(), table.getName(), DBLocks.Type.Read);
 
             TableMetaData tableMetaData = null;
             try {
@@ -363,13 +394,10 @@ public class ColumnResource {
             // read meta file into
             databaseMD.addTableMetaData(tableMetaData);
 
-        } finally{
+        } finally {
 
-            if (lock!=null)
-                lock.readLock().unlock();
-
-            }
-
+            dbLocks.unlock(databaseMD.getName(), table.getName(), DBLocks.Type.Read);
+        }
 
     }
 
