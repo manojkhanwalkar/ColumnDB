@@ -21,7 +21,10 @@ public class ZKClient {
 
     // declare zookeeper instance to access ZooKeeper ensemble
     private ZooKeeper zoo;
-    private ZKUtil zkUtil = new ZKUtil();
+
+    public ZooKeeper getZoo() {
+        return zoo;
+    }
 
     final CountDownLatch connectedSignal = new CountDownLatch(1);
 
@@ -92,7 +95,7 @@ public class ZKClient {
 
 
     // Method to create znode in zookeeper ensemble
-    private void create(String path, HostPortTuple tuple) throws
+    public void create(String path, HostPortTuple tuple) throws
             Exception {
 
         byte[] data = mapper.writeValueAsString(tuple).getBytes(Charsets.UTF_8);
@@ -139,7 +142,7 @@ public class ZKClient {
 
       //  delete(parentPath);
 
-      //  create(parentPath, null);
+        create(parentPath, null);
 
 
 

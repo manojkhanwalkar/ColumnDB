@@ -84,51 +84,5 @@ public class RestConnector  {
     }
 
 
-/*
-    public void send(RequestFutureTask task)
-    {
-        Response response = send(task.getProcessor().getRequest());
-        task.getProcessor().setResponse(response);
-        task.run();
-    }
-
-
-    private Response send(Request request) {
-
-        Response response = null ;
-
-        switch(request.getRequestType())
-        {
-            case HEALTHCHECK :
-                ResponseEntity<HealthResponse> responseEntity = restTemplate.getForEntity(protocol+"://" + host + ":" + port + request.getService() , HealthResponse.class);
-                response = responseEntity.getBody();
-                break ;
-            case MATCHDEVICE :
-                HttpHeaders requestHeaders = new HttpHeaders();
-                MatchDeviceRequest mdr = (MatchDeviceRequest)request;
-
-                String str = null;
-                try {
-                    str = clientId + "_" + HashUtil.getHash(mdr.getTime(),secret);
-                } catch (Exception ex) {
-                    Logger.getLogger(RestConnectionAdapter.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                requestHeaders.set("Authorization", str);
-
-                HttpEntity<MatchDeviceRequest> requestEntity = new HttpEntity<>(mdr, requestHeaders);
-                ResponseEntity<MatchDeviceResponse> response1 = restTemplate.exchange(protocol+"://" + host + ":" + port +  request.getService(), HttpMethod.POST, requestEntity, MatchDeviceResponse.class);
-
-                response = response1.getBody();
-
-        }
-
-        //  System.out.println(response.toString());
-
-
-        return response;
-
-    }
-*/
-
 
 }
