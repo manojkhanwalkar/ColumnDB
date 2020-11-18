@@ -6,6 +6,7 @@ import io.dropwizard.server.DefaultServerFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.server.HttpConnectionFactory;
+import storage.FileStorageManager;
 import storage.MemoryStorageManager;
 
 public class ColumnApplication extends Application<ExampleServiceConfiguration> {
@@ -38,7 +39,7 @@ public class ColumnApplication extends Application<ExampleServiceConfiguration> 
 
         int port = factory.getPort();
         
-        final ColumnResource resource = new ColumnResource(configuration.getMessages().getRootDir(), configuration.getMessages().getClusterName(), host,port, new MemoryStorageManager());
+        final ColumnResource resource = new ColumnResource(configuration.getMessages().getRootDir(), configuration.getMessages().getClusterName(), host,port, new FileStorageManager());
         environment.jersey().register(resource);
         environment.healthChecks().register("APIHealthCheck", new AppHealthCheck());
 

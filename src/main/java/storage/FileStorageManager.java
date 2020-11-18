@@ -3,6 +3,7 @@ package storage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import query.*;
+import rest.CountNDataProcessor;
 import rest.DBLocks;
 import rest.DataWriter;
 
@@ -65,6 +66,22 @@ public class FileStorageManager implements StorageManager {
     public void deleteTable(String databaseName, String tableName) {
         deleteTableDir(clusterName,databaseName,tableName);
 
+
+    }
+
+    @Override
+    public Response processCount(CountRequest request) {
+        CountNDataProcessor processor = new CountNDataProcessor(request);
+
+        return processor.processCount();
+    }
+
+    @Override
+    public DataContainer processData(CountRequest request) {
+
+        CountNDataProcessor processor = new CountNDataProcessor(request);
+
+        return processor.processData();
 
     }
 

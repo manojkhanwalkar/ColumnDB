@@ -1,8 +1,6 @@
 package storage;
 
-import query.ClusterMetaData;
-import query.Request;
-import query.TableMetaData;
+import query.*;
 
 public interface StorageManager {
 
@@ -36,4 +34,8 @@ public interface StorageManager {
     void populateClusterMetaData(ClusterMetaData clusterMD);
 
     boolean existsTable(String databaseName, String tableName);
+
+    Response processCount(CountRequest request);
+
+    DataContainer processData(CountRequest request);
 }

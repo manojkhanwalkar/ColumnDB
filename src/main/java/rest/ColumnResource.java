@@ -65,15 +65,13 @@ public class ColumnResource {
 
 
 
-    static ObjectMapper mapper = new ObjectMapper();
-
     @Path("/countquery")
     @POST
     public Response query(@Context HttpServletRequest hsReq, @Valid CountRequest request) {
 
-        CountNDataProcessor processor = new CountNDataProcessor(request);
+        Response metaResponse  = storageManager.processCount(request);
 
-        Response metaResponse = processor.processCount();
+
 
 
 
@@ -85,9 +83,8 @@ public class ColumnResource {
     @POST
     public DataContainer dataquery(@Context HttpServletRequest hsReq, @Valid CountRequest request) {
 
-        CountNDataProcessor processor = new CountNDataProcessor(request);
+        DataContainer metaResponse  = storageManager.processData(request);
 
-         DataContainer metaResponse = processor.processData();
 
 
 

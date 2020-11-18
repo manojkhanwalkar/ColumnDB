@@ -121,11 +121,15 @@ public class MemoryStorageManager implements StorageManager {
 
     }
 
-    /*
-      public void write()
-    {
+    @Override
+    public Response processCount(CountRequest request) {
+        return null;
     }
-     */
+
+    @Override
+    public DataContainer processData(CountRequest request) {
+        return null;
+    }
 
     @Override
     public void populateClusterMetaData(ClusterMetaData clusterMD) {
