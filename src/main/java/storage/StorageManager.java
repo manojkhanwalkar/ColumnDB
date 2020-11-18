@@ -6,6 +6,8 @@ import query.TableMetaData;
 
 public interface StorageManager {
 
+
+
     default void  setRootDirName(String rootDirName) {
 
     }
@@ -32,4 +34,6 @@ public interface StorageManager {
     void write(Request request);
 
     void populateClusterMetaData(ClusterMetaData clusterMD);
+
+    boolean existsTable(String databaseName, String tableName);
 }

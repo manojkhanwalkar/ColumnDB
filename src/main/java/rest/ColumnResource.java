@@ -209,12 +209,6 @@ public class ColumnResource {
 
             case CreateDatabase:
 
-               String databasePath = rootDirName+seperator+clusterName+seperator+databaseName;
-               if (!exists(databasePath)) {
-                   dbLocks.createLock(databaseName);
-                   createDirs(clusterName, databaseName, null);
-               }
-
                 if (!storageManager.existsDatabase(databaseName)) {
                     dbLocks.createLock(databaseName);
 
@@ -225,13 +219,11 @@ public class ColumnResource {
                 return response;
 
             case DeleteDatabase:
-
-                deleteDatabaseDirs(clusterName,databaseName);
                 storageManager.deleteDatabase(databaseName);
                 dbLocks.deleteLock(databaseName);
                 return response;
             case DeleteTable:
-                deleteTableDir(clusterName,databaseName,tableName);
+
                 storageManager.deleteTable(databaseName,tableName);
                 dbLocks.deleteLock(databaseName,tableName);
                 return response;
@@ -240,31 +232,8 @@ public class ColumnResource {
 
                 try {
                     dbLocks.lock(databaseName, tableName, DBLocks.Type.Write);
-                    String metaFile = rootDirName + seperator + clusterName + seperator + databaseName + seperator + tableName + seperator + tableName + ".meta";
 
                     storageManager.deleteColumn(databaseName,tableName,tableMetaData); //TODO - combined logic to be moved into storage manager
-
-                    TableMetaData combined = TableMetaData.removeColumns(TableMetaData.fromJSONString(metaFile), tableMetaData);
-
-                    try {
-                        String s = mapper.writeValueAsString(combined);
-
-                        FileWriter writer = new FileWriter(rootDirName + seperator + clusterName + seperator + databaseName + seperator + tableName + seperator + tableName + ".meta");
-                        BufferedWriter metaFileWriter = new BufferedWriter(writer);
-                        metaFileWriter.write(s);
-                        metaFileWriter.flush();
-                        metaFileWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    File dir = new File(rootDirName + seperator + clusterName + seperator + databaseName + seperator + tableName);
-                    tableMetaData.getColumns().values().stream().forEach(cmd -> {
-
-
-                        File file = new File(dir + seperator + cmd.getColumnName());
-                        file.delete();
-                    });
 
                     return response;
 
@@ -280,38 +249,7 @@ public class ColumnResource {
                 try {
                     dbLocks.lock(databaseName, tableName, DBLocks.Type.Write);
 
-                    createDirs(clusterName, databaseName, tableName);
-                    File dir = new File(rootDirName + seperator + clusterName + seperator + databaseName + seperator + tableName);
-                    tableMetaData.getColumns().values().stream().forEach(cmd -> {
-
-
-                        File file = new File(dir + seperator + cmd.getColumnName());
-                        try {
-                            file.createNewFile();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    });
-
-                    String metaFile = rootDirName + seperator + clusterName + seperator + databaseName + seperator + tableName + seperator + tableName + ".meta";
-
-                    TableMetaData combined = TableMetaData.addColumns(TableMetaData.fromJSONString(metaFile), tableMetaData);
-
-                    storageManager.addColumn(databaseName,tableName,tableMetaData); //TODO - combined logic to be moved into storage manager
-
-
-                    try {
-                        String s = mapper.writeValueAsString(combined);
-
-                        FileWriter writer = new FileWriter(rootDirName + seperator + clusterName + seperator + databaseName + seperator + tableName + seperator + tableName + ".meta");
-                        BufferedWriter metaFileWriter = new BufferedWriter(writer);
-                        metaFileWriter.write(s);
-                        metaFileWriter.flush();
-                        metaFileWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
+                    storageManager.addColumn(databaseName,tableName,tableMetaData);
 
                     return response;
 
@@ -320,50 +258,15 @@ public class ColumnResource {
                 }
             }
             case CreateTable:
-                String tablePath = rootDirName+seperator+clusterName+seperator+databaseName+seperator+tableName;
-                storageManager.createTable(databaseName,tableName, tableMetaData); //TODO - exists check to be implemented on Storage manager
 
-                if (!exists(tablePath)) {
-
+                if (storageManager.existsDatabase(databaseName) && !storageManager.existsTable(databaseName,tableName))
+                {
                     dbLocks.createLock(databaseName, tableName);
 
                     dbLocks.lock(databaseName,tableName, DBLocks.Type.Write);
-
-
-
-                    createDirs(clusterName, databaseName, tableName);
-
-                    File dir = new File(rootDirName + seperator + clusterName + seperator + databaseName + seperator + tableName);
-                    //dir.mkdirs();
-
-                    tableMetaData.getColumns().values().stream().forEach(cmd -> {
-
-
-                        File file = new File(dir + seperator + cmd.getColumnName());
-                        try {
-                            file.createNewFile();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    });
-
-                    try {
-                        String s = mapper.writeValueAsString(tableMetaData);
-
-                        FileWriter writer = new FileWriter(rootDirName + seperator + clusterName + seperator + databaseName + seperator + tableName + seperator + tableName + ".meta");
-                        BufferedWriter metaFileWriter = new BufferedWriter(writer);
-                        metaFileWriter.write(s);
-                        metaFileWriter.flush();
-                        metaFileWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
+                    storageManager.createTable(databaseName,tableName, tableMetaData);
                     dbLocks.unlock(databaseName,tableName, DBLocks.Type.Write);
-
                 }
-
-                // response   = db.query(request);
               break ;
             default :
                 response = null;
@@ -407,109 +310,8 @@ public class ColumnResource {
     }
 
 
-    private boolean exists(String dir)
-    {
-        File dirFile = new File(dir);
-        if (dirFile.exists())
-            return true;
-        else
-            return false;
-    }
 
     //
 
-    private void createDirs(String clusterName, String databaseName, String tableName) {
 
-        if (clusterName==null)
-            return ;
-
-        File clusterDir = new File(rootDirName+seperator+clusterName);
-        if (!clusterDir.exists())
-        {
-            clusterDir.mkdir();
-        }
-
-        if (databaseName==null)
-            return;
-
-        File databaseDir = new File(clusterDir.getAbsolutePath()+seperator+databaseName);
-        if (!databaseDir.exists())
-        {
-            databaseDir.mkdir();
-        }
-
-        if (tableName==null)
-            return;
-
-        File tableDir = new File(databaseDir.getAbsolutePath()+seperator+tableName);
-        if (!tableDir.exists())
-        {
-            tableDir.mkdir();
-        }
-
-    }
-
-
-    private void deleteDatabaseDirs(String clusterName, String databaseName) {
-
-        if (clusterName==null || (databaseName==null) )
-            return ;
-
-        File clusterDir = new File(rootDirName+seperator+clusterName);
-        if (clusterDir.exists())
-        {
-
-            File databaseDir = new File(clusterDir.getAbsolutePath()+seperator+databaseName);
-            if (databaseDir.exists())
-            {
-                for (File tableDir : databaseDir.listFiles())
-                {
-                        for (File colFile : tableDir.listFiles())
-                        {
-                            colFile.delete();
-                        }
-
-                    tableDir.delete();
-
-                }
-
-                databaseDir.delete();
-            }
-
-
-
-        }
-
-    }
-
-    private void deleteTableDir(String clusterName, String databaseName,String tableName) {
-
-        if (clusterName==null || (databaseName==null || tableName==null) )
-            return ;
-
-        File clusterDir = new File(rootDirName+seperator+clusterName);
-        if (clusterDir.exists())
-        {
-
-            File databaseDir = new File(clusterDir.getAbsolutePath()+seperator+databaseName);
-            if (databaseDir.exists())
-            {
-                File tableDir =  new File(databaseDir.getAbsolutePath()+seperator+tableName);
-                {
-                    for (File colFile : tableDir.listFiles())
-                    {
-                        colFile.delete();
-                    }
-
-                    tableDir.delete();
-
-                }
-
-            }
-
-
-
-        }
-
-    }
 }

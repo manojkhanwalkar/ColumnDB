@@ -26,6 +26,11 @@ public class MemoryStorageManager implements StorageManager {
         metaData.computeIfAbsent(databaseName, k->new HashMap<>());
     }
 
+    @Override
+    public boolean existsTable(String databaseName, String tableName) {
+        return clusterData.get(databaseName)!=null && clusterData.get(databaseName).get(tableName)!=null;
+    }
+
     public void createTable(String databaseName, String tableName, TableMetaData tableMetaData)
     {
         clusterData.get(databaseName).computeIfAbsent(tableName, t->new HashMap<>());
