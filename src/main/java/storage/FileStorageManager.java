@@ -3,7 +3,7 @@ package storage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import query.*;
-import rest.CountNDataProcessor;
+import rest.CountNDataProcessorForFile;
 import rest.DBLocks;
 import rest.DataWriter;
 
@@ -71,7 +71,7 @@ public class FileStorageManager implements StorageManager {
 
     @Override
     public Response processCount(CountRequest request) {
-        CountNDataProcessor processor = new CountNDataProcessor(request);
+        CountNDataProcessorForFile processor = new CountNDataProcessorForFile(request);
 
         return processor.processCount();
     }
@@ -79,7 +79,7 @@ public class FileStorageManager implements StorageManager {
     @Override
     public DataContainer processData(CountRequest request) {
 
-        CountNDataProcessor processor = new CountNDataProcessor(request);
+        CountNDataProcessorForFile processor = new CountNDataProcessorForFile(request);
 
         return processor.processData();
 

@@ -2,6 +2,8 @@ package storage;
 
 import org.apache.commons.lang.StringUtils;
 import query.*;
+import rest.CountNDataProcessorForFile;
+import rest.CountNDataProcessorForMemory;
 import rest.DBLocks;
 
 import java.io.BufferedReader;
@@ -124,14 +126,16 @@ public class MemoryStorageManager implements StorageManager {
     @Override
     public Response processCount(CountRequest request) {
 
-        //TODO - in memory count to be implemented . Refactor so that the file reading part is separate from the processing part to get common code across storage managers.
-        return null;
+        CountNDataProcessorForMemory processor = new CountNDataProcessorForMemory(request);
+
+        return processor.processCount();
     }
 
     @Override
     public DataContainer processData(CountRequest request) {
-        //TODO - in memory count to be implemented . Refactor so that the file reading part is separate from the processing part to get common code across storage managers.
-        return null;
+        CountNDataProcessorForMemory processor = new CountNDataProcessorForMemory(request);
+
+        return processor.processData();
     }
 
     @Override
