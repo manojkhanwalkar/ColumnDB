@@ -6,7 +6,7 @@ import table.Table;
 
 import java.util.List;
 
-public class ActivitytQueryTester {
+public class ActivityQueryTester {
 
     public static void main(String[] args)  throws Exception {
 
