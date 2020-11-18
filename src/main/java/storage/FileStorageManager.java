@@ -13,6 +13,11 @@ import static rest.ColumnResource.seperator;
 
 public class FileStorageManager implements StorageManager {
 
+    public FileStorageManager()
+    {
+        System.out.println("*************  File Storage Manager is active ***************");
+    }
+
     String rootDirName;
 
     @Override

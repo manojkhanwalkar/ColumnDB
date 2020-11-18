@@ -8,10 +8,16 @@ import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import storage.FileStorageManager;
 import storage.MemoryStorageManager;
+import storage.StorageManager;
 
 public class ColumnApplication extends Application<ExampleServiceConfiguration> {
 
+    StorageManager storageManager;
 
+    public ColumnApplication(StorageManager storageManager)
+    {
+        this.storageManager = storageManager;
+    }
 
     @Override
     public String getName() {
@@ -39,7 +45,7 @@ public class ColumnApplication extends Application<ExampleServiceConfiguration> 
 
         int port = factory.getPort();
         
-        final ColumnResource resource = new ColumnResource(configuration.getMessages().getRootDir(), configuration.getMessages().getClusterName(), host,port, new FileStorageManager());
+        final ColumnResource resource = new ColumnResource(configuration.getMessages().getRootDir(), configuration.getMessages().getClusterName(), host,port, storageManager);
         environment.jersey().register(resource);
         environment.healthChecks().register("APIHealthCheck", new AppHealthCheck());
 

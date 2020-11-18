@@ -23,8 +23,14 @@
     <bean id="RestService" class="columndb.RestService">
         <property name="name" value="RestService" />
         <property name="restConfigName" value="/home/manoj/IdeaProjects/ColumnDB/src/main/resources/configuration.yml" />
+        <property name= "storageManager"  ref="StorageManager" />
 
     </bean>
+
+    <!-- <bean id="StorageManager" class="storage.MemoryStorageManager" ></bean> -->
+
+    <bean id="StorageManager" class="storage.FileStorageManager" ></bean>
+
 
 
 </beans>

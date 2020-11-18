@@ -20,6 +20,11 @@ public class MemoryStorageManager implements StorageManager {
 
     Map<String,Map<String,TableMetaData>> metaData = new HashMap<>();
 
+    public MemoryStorageManager()
+    {
+        System.out.println("#############  Memory Storage Manager is active ###############");
+    }
+
 
     public void createDatabase(String databaseName)
     {

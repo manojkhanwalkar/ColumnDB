@@ -2,6 +2,7 @@ package columndb;
 
 import rest.ColumnApplication;
 import server.Service;
+import storage.StorageManager;
 
 public class RestService implements Service {
 
@@ -10,6 +11,16 @@ public class RestService implements Service {
     String name ;
 
     String restConfigName;
+
+    StorageManager storageManager;
+
+    public StorageManager getStorageManager() {
+        return storageManager;
+    }
+
+    public void setStorageManager(StorageManager storageManager) {
+        this.storageManager = storageManager;
+    }
 
     public String getRestConfigName() {
         return restConfigName;
@@ -23,7 +34,7 @@ public class RestService implements Service {
     public void init() {
 
         try {
-            new ColumnApplication().run("server", restConfigName);
+            new ColumnApplication(storageManager).run("server", restConfigName);
         } catch (Exception e) {
             e.printStackTrace();
         }
