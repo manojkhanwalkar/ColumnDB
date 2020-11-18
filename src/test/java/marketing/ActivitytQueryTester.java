@@ -37,7 +37,7 @@ public class ActivitytQueryTester {
 
            List<DataContainer> dataContainers = client.queryData(countRequest);
 
-            dataContainers.stream().forEach(System.out::println);
+            //dataContainers.stream().forEach(System.out::println);
 
             Table table = new Table();
 

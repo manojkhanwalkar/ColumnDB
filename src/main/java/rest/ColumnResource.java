@@ -132,7 +132,11 @@ public class ColumnResource {
         ClusterMetaData clusterMD = new ClusterMetaData();
         clusterMD.setName(clusterName);
 
-        storageManager.populateClusterMetaData(clusterMD);
+        ClusterMetaData cmd = new ClusterMetaData();
+        cmd.setName(clusterName);
+        storageManager.populateClusterMetaData(cmd);
+
+        System.out.println(cmd);
 
         for (File f : dir.listFiles()) {
             if (f.isDirectory())
@@ -317,13 +321,14 @@ public class ColumnResource {
             }
             case CreateTable:
                 String tablePath = rootDirName+seperator+clusterName+seperator+databaseName+seperator+tableName;
+                storageManager.createTable(databaseName,tableName, tableMetaData); //TODO - exists check to be implemented on Storage manager
+
                 if (!exists(tablePath)) {
 
                     dbLocks.createLock(databaseName, tableName);
 
                     dbLocks.lock(databaseName,tableName, DBLocks.Type.Write);
 
-                    storageManager.createTable(databaseName,tableName);
 
 
                     createDirs(clusterName, databaseName, tableName);

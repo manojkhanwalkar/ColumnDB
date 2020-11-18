@@ -27,7 +27,7 @@ public interface StorageManager {
 
     void addColumn(String databaseName, String tableName, TableMetaData tableMetaData);
 
-    void createTable(String databaseName, String tableName);
+    void createTable(String databaseName, String tableName, TableMetaData tableMetaData);
 
     void write(Request request);
 
