@@ -71,7 +71,7 @@ public class ColumnResource {
     @POST
     public Response query(@Context HttpServletRequest hsReq, @Valid CountRequest request) {
 
-        CountNDataProcessor processor = new CountNDataProcessor(request,storageManager);
+        CountNDataProcessor processor = new CountNDataProcessor(request);
 
         Response metaResponse = processor.processCount();
 
@@ -85,7 +85,7 @@ public class ColumnResource {
     @POST
     public DataContainer dataquery(@Context HttpServletRequest hsReq, @Valid CountRequest request) {
 
-        CountNDataProcessor processor = new CountNDataProcessor(request, storageManager);
+        CountNDataProcessor processor = new CountNDataProcessor(request);
 
          DataContainer metaResponse = processor.processData();
 
@@ -101,17 +101,7 @@ public class ColumnResource {
     public Response batch(@Valid Request request) {
 
 
-
         storageManager.write(request);
-        DataWriter writer = new DataWriter(request,rootDirName);
-
-        writer.write();
-
-        // get the cluster + database + tablename from container and navigate to that directory.
-        // for each column in the map , open the corresponding coclumn file and go to the end
-        // append the list of values to the file
-
-
 
         return null;
     }
@@ -124,38 +114,13 @@ public class ColumnResource {
     public MetaResponse metaQuery(@Context HttpServletRequest hsReq, @Valid String clusterName) {
 
 
-
         MetaResponse metaResponse = new MetaResponse();
-
-        File dir = new File(rootDirName+seperator+clusterName);
-
-        ClusterMetaData clusterMD = new ClusterMetaData();
-        clusterMD.setName(clusterName);
 
         ClusterMetaData cmd = new ClusterMetaData();
         cmd.setName(clusterName);
         storageManager.populateClusterMetaData(cmd);
 
-        System.out.println(cmd);
-
-        for (File f : dir.listFiles()) {
-            if (f.isDirectory())
-            {
-                processDatabase(f,clusterMD,clusterName);
-            }
-
-
-        }
-
-        try {
-            String s = mapper.writeValueAsString(clusterMD);
-            System.out.println(s);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
-
-        metaResponse.setClusterMetaData(clusterMD);
+        metaResponse.setClusterMetaData(cmd);
 
 
         return metaResponse;
@@ -163,23 +128,7 @@ public class ColumnResource {
 
     }
 
-    private  void processDatabase(File database, ClusterMetaData clusterMD, String clusterName) {
 
-        DatabaseMetaData databaseMD = new DatabaseMetaData();
-        databaseMD.setName(database.getName());
-
-        clusterMD.addDatabaseMetaData(databaseMD);
-
-        //  System.out.println(database.getName());
-        for (File f : database.listFiles())
-        {
-            if (f.isDirectory())
-            {
-                processTable(f,databaseMD,clusterName);
-            }
-
-        }
-    }
 
 
 
@@ -277,37 +226,6 @@ public class ColumnResource {
         return response;
     }
 
-    private  void processTable(File table, DatabaseMetaData databaseMD, String clusterName) {
-
-
-        DBLocks dbLocks = DBLocks.getInstance();
-        try {
-
-            dbLocks.lock(databaseMD.getName(), table.getName(), DBLocks.Type.Read);
-
-            TableMetaData tableMetaData = null;
-            try {
-                FileReader reader = new FileReader(rootDirName + seperator + clusterName + seperator + databaseMD.getName() + seperator + table.getName() + seperator + table.getName() + ".meta");
-                BufferedReader metaFileReader = new BufferedReader(reader);
-                String s = metaFileReader.readLine();
-
-                tableMetaData = mapper.readValue(s, TableMetaData.class);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            // System.out.println(tableMetaData);
-
-
-            // read meta file into
-            databaseMD.addTableMetaData(tableMetaData);
-
-        } finally {
-
-            dbLocks.unlock(databaseMD.getName(), table.getName(), DBLocks.Type.Read);
-        }
-
-    }
 
 
 

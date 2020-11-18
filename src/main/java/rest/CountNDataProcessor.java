@@ -34,7 +34,7 @@ public class CountNDataProcessor {
 
     // for now number of records is hardcoded .
 
-    public CountNDataProcessor(CountRequest request, StorageManager storageManager)
+    public CountNDataProcessor(CountRequest request)
     {
         this.clusterName = request.getClusterName();
         this.dataBaseName = request.getDatabaseName();

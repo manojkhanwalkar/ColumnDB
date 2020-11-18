@@ -1,15 +1,12 @@
 package storage;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import query.ClusterMetaData;
-import query.Request;
-import query.TableMetaData;
+import query.*;
 import rest.DBLocks;
+import rest.DataWriter;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 import static rest.ColumnResource.seperator;
 
@@ -193,10 +190,39 @@ public class FileStorageManager implements StorageManager {
     @Override
     public void write(Request request) {
 
+        DataWriter writer = new DataWriter(request,rootDirName);
+
+        writer.write();
+
     }
 
     @Override
     public void populateClusterMetaData(ClusterMetaData clusterMD) {
+
+
+
+        File dir = new File(rootDirName+seperator+clusterName);
+
+
+        for (File f : dir.listFiles()) {
+            if (f.isDirectory())
+            {
+                processDatabase(f,clusterMD,clusterName);
+            }
+
+
+        }
+
+        try {
+            String s = mapper.writeValueAsString(clusterMD);
+            System.out.println(s);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+
+
+
 
     }
 
@@ -303,5 +329,56 @@ public class FileStorageManager implements StorageManager {
         }
 
     }
+
+    private  void processDatabase(File database, ClusterMetaData clusterMD, String clusterName) {
+
+        DatabaseMetaData databaseMD = new DatabaseMetaData();
+        databaseMD.setName(database.getName());
+
+        clusterMD.addDatabaseMetaData(databaseMD);
+
+        //  System.out.println(database.getName());
+        for (File f : database.listFiles())
+        {
+            if (f.isDirectory())
+            {
+                processTable(f,databaseMD,clusterName);
+            }
+
+        }
+    }
+
+    private  void processTable(File table, DatabaseMetaData databaseMD, String clusterName) {
+
+
+        DBLocks dbLocks = DBLocks.getInstance();
+        try {
+
+            dbLocks.lock(databaseMD.getName(), table.getName(), DBLocks.Type.Read);
+
+            TableMetaData tableMetaData = null;
+            try {
+                FileReader reader = new FileReader(rootDirName + seperator + clusterName + seperator + databaseMD.getName() + seperator + table.getName() + seperator + table.getName() + ".meta");
+                BufferedReader metaFileReader = new BufferedReader(reader);
+                String s = metaFileReader.readLine();
+
+                tableMetaData = mapper.readValue(s, TableMetaData.class);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            // System.out.println(tableMetaData);
+
+
+            // read meta file into
+            databaseMD.addTableMetaData(tableMetaData);
+
+        } finally {
+
+            dbLocks.unlock(databaseMD.getName(), table.getName(), DBLocks.Type.Read);
+        }
+
+    }
+
 
 }
