@@ -38,4 +38,5 @@ public interface StorageManager {
     Response processCount(CountRequest request);
 
     DataContainer processData(CountRequest request);
+
 }

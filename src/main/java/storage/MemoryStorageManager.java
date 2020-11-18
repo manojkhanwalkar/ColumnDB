@@ -126,14 +126,14 @@ public class MemoryStorageManager implements StorageManager {
     @Override
     public Response processCount(CountRequest request) {
 
-        CountNDataProcessorForMemory processor = new CountNDataProcessorForMemory(request);
+        CountNDataProcessorForMemory processor = new CountNDataProcessorForMemory(request,this);
 
         return processor.processCount();
     }
 
     @Override
     public DataContainer processData(CountRequest request) {
-        CountNDataProcessorForMemory processor = new CountNDataProcessorForMemory(request);
+        CountNDataProcessorForMemory processor = new CountNDataProcessorForMemory(request,this);
 
         return processor.processData();
     }
@@ -168,4 +168,13 @@ public class MemoryStorageManager implements StorageManager {
 
     }
 
+    public TableMetaData getMetaData(String dataBaseName, String tableName) {
+
+        return metaData.get(dataBaseName).get(tableName);
+    }
+
+    public StringBuilder getColumnData(String dataBaseName, String tableName, String columnName) {
+
+        return new StringBuilder(clusterData.get(dataBaseName).get(tableName).get(columnName));
+    }
 }

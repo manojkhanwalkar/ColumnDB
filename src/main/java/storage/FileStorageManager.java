@@ -71,7 +71,7 @@ public class FileStorageManager implements StorageManager {
 
     @Override
     public Response processCount(CountRequest request) {
-        CountNDataProcessorForFile processor = new CountNDataProcessorForFile(request);
+        CountNDataProcessorForFile processor = new CountNDataProcessorForFile(request,this);
 
         return processor.processCount();
     }
@@ -79,7 +79,7 @@ public class FileStorageManager implements StorageManager {
     @Override
     public DataContainer processData(CountRequest request) {
 
-        CountNDataProcessorForFile processor = new CountNDataProcessorForFile(request);
+        CountNDataProcessorForFile processor = new CountNDataProcessorForFile(request,this);
 
         return processor.processData();
 
