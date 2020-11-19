@@ -9,6 +9,8 @@ import query.DataContainer;
 import table.Table;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class AsyncActivityQueryTester {
 
@@ -39,19 +41,23 @@ public class AsyncActivityQueryTester {
 
             responses.stream().map(resp->resp.getResult()).forEach(System.out::println);*/
 
-           List<DataContainer> dataContainers = client.queryData(countRequest).get();
-
-            //dataContainers.stream().forEach(System.out::println);
-
+          var dataContainer= client.queryData(countRequest).get();
             Table table = new Table();
-
-            table.process(dataContainers);
-
+            table.process(dataContainer);
             System.out.println(table);
 
+          client.queryData(countRequest,(dc)->{
+               Table t = new Table();
+
+                t.process(dc);
+
+                System.out.println(t);
+            });
+
+            System.out.println("Using Async consumer callback");
 
 
-
+           Thread.sleep(5000);
 
     }
 
