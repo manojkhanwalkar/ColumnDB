@@ -1,6 +1,5 @@
 package storage;
 
-import org.apache.commons.lang.StringUtils;
 import query.*;
 import rest.CountNDataProcessorForFile;
 import rest.CountNDataProcessorForMemory;
@@ -85,7 +84,7 @@ public class MemoryStorageManager implements StorageManager {
 
         tableMetaData.getColumns().values().stream().forEach(cmd -> {
 
-                    clusterData.get(databaseName).get(tableName).computeIfAbsent(cmd.getColumnName(), c -> StringUtils.EMPTY);
+                    clusterData.get(databaseName).get(tableName).computeIfAbsent(cmd.getColumnName(), c -> "");
                 });
 
         TableMetaData combined = TableMetaData.addColumns(metaData.get(databaseName).get(tableName), tableMetaData);

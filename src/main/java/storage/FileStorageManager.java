@@ -76,17 +76,13 @@ public class FileStorageManager implements StorageManager {
 
     @Override
     public Response processCount(CountRequest request) {
-        CountNDataProcessorForFile processor = new CountNDataProcessorForFile(request,this);
-
-        return processor.processCount();
+        return new CountNDataProcessorForFile(request,this).processCount();
     }
 
     @Override
     public DataContainer processData(CountRequest request) {
 
-        CountNDataProcessorForFile processor = new CountNDataProcessorForFile(request,this);
-
-        return processor.processData();
+        return new CountNDataProcessorForFile(request,this).processData();
 
     }
 
@@ -211,6 +207,16 @@ public class FileStorageManager implements StorageManager {
 
     @Override
     public void write(Request request) {
+
+        // each column key becomes a file name; only the table's own columns may be written
+        TableMetaData tableMetaData = TableMetaData.fromJSONString(rootDirName + seperator + clusterName + seperator
+                + request.getDatabaseName() + seperator + request.getTableName() + seperator + request.getTableName() + ".meta");
+        if (tableMetaData == null)
+            throw new IllegalArgumentException("Unknown table " + request.getDatabaseName() + "." + request.getTableName());
+        for (String column : request.getDataContainer().getValues().keySet()) {
+            if (tableMetaData.getColumnMetaData(column) == null)
+                throw new IllegalArgumentException("Unknown column " + column);
+        }
 
         DataWriter writer = new DataWriter(request,rootDirName);
 
@@ -379,9 +385,7 @@ public class FileStorageManager implements StorageManager {
             dbLocks.lock(databaseMD.getName(), table.getName(), DBLocks.Type.Read);
 
             TableMetaData tableMetaData = null;
-            try {
-                FileReader reader = new FileReader(rootDirName + seperator + clusterName + seperator + databaseMD.getName() + seperator + table.getName() + seperator + table.getName() + ".meta");
-                BufferedReader metaFileReader = new BufferedReader(reader);
+            try (BufferedReader metaFileReader = new BufferedReader(new FileReader(rootDirName + seperator + clusterName + seperator + databaseMD.getName() + seperator + table.getName() + seperator + table.getName() + ".meta"))) {
                 String s = metaFileReader.readLine();
 
                 tableMetaData = mapper.readValue(s, TableMetaData.class);

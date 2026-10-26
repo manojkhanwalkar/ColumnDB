@@ -1,7 +1,7 @@
 package person;
 
 import client.ColumnDBClient;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import query.*;
 
 public class CreateTable {

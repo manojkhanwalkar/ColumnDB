@@ -1,10 +1,7 @@
 package rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
 import query.*;
-import rest.pool.BRKeyedPoolFactory;
-import rest.pool.ColumnReader;
 import storage.StorageManager;
 
 import java.io.BufferedReader;
@@ -24,7 +21,6 @@ public class CountNDataProcessorForFile extends CountNDataProcessor {
     {
         super(request,storageManager);
         this.request = request;
-        pool = new GenericKeyedObjectPool<>(new BRKeyedPoolFactory());
 
         loadMetaData();
     }
@@ -43,25 +39,13 @@ public class CountNDataProcessorForFile extends CountNDataProcessor {
 
 
 
-    private GenericKeyedObjectPool<String, ColumnReader> pool;
+    // a column file holds all values on one line; the reader is closed on every path
       private  StringBuilder readFile( String name) {
 
-        try {
- //           FileReader reader = new FileReader(name);
-   //         BufferedReader metaFileReader = new BufferedReader(reader);
-
-            ColumnReader reader = pool.borrowObject(name); //pool.computeIfAbsent(name,k->new GenericObjectPool<>(new BRPoolFactory(name))).borrowObject();
-
-            BufferedReader metaFileReader = reader.getBufferedReader();
-
-
-            String s=  metaFileReader.readLine();
-          //  metaFileReader.close();
-
-            pool.returnObject(name,reader);
-
-            return new StringBuilder(s);
-        } catch (Exception e) {
+        try (BufferedReader columnReader = new BufferedReader(new FileReader(name))) {
+            String s = columnReader.readLine();
+            return new StringBuilder(s == null ? "" : s);
+        } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
@@ -77,9 +61,7 @@ public class CountNDataProcessorForFile extends CountNDataProcessor {
 
     protected void loadMetaData()
     {
-        try {
-            FileReader reader = new FileReader(rootDirName+seperator+clusterName+seperator+dataBaseName+seperator+tableName+seperator+tableName+".meta");
-            BufferedReader metaFileReader = new BufferedReader(reader);
+        try (BufferedReader metaFileReader = new BufferedReader(new FileReader(rootDirName+seperator+clusterName+seperator+dataBaseName+seperator+tableName+seperator+tableName+".meta"))) {
             String s = metaFileReader.readLine();
 
             tableMetaData = mapper.readValue(s, TableMetaData.class);

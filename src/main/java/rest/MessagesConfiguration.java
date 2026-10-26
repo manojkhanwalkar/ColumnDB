@@ -26,6 +26,17 @@ public class MessagesConfiguration {
         this.rootDir = rootDir;
     }
 
+    /** Host registered in ZooKeeper for clients to connect to; defaults from the connector's bindHost. */
+    private String advertisedHost;
+
+    public String getAdvertisedHost() {
+        return advertisedHost;
+    }
+
+    public void setAdvertisedHost(String advertisedHost) {
+        this.advertisedHost = advertisedHost;
+    }
+
     @NotNull private String clusterName;
 
     public String getClusterName() {
