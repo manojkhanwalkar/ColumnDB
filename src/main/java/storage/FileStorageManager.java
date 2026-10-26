@@ -76,25 +76,13 @@ public class FileStorageManager implements StorageManager {
 
     @Override
     public Response processCount(CountRequest request) {
-        CountNDataProcessorForFile processor = new CountNDataProcessorForFile(request,this);
-
-        try {
-            return processor.processCount();
-        } finally {
-            processor.close();
-        }
+        return new CountNDataProcessorForFile(request,this).processCount();
     }
 
     @Override
     public DataContainer processData(CountRequest request) {
 
-        CountNDataProcessorForFile processor = new CountNDataProcessorForFile(request,this);
-
-        try {
-            return processor.processData();
-        } finally {
-            processor.close();
-        }
+        return new CountNDataProcessorForFile(request,this).processData();
 
     }
 
@@ -219,6 +207,16 @@ public class FileStorageManager implements StorageManager {
 
     @Override
     public void write(Request request) {
+
+        // each column key becomes a file name; only the table's own columns may be written
+        TableMetaData tableMetaData = TableMetaData.fromJSONString(rootDirName + seperator + clusterName + seperator
+                + request.getDatabaseName() + seperator + request.getTableName() + seperator + request.getTableName() + ".meta");
+        if (tableMetaData == null)
+            throw new IllegalArgumentException("Unknown table " + request.getDatabaseName() + "." + request.getTableName());
+        for (String column : request.getDataContainer().getValues().keySet()) {
+            if (tableMetaData.getColumnMetaData(column) == null)
+                throw new IllegalArgumentException("Unknown column " + column);
+        }
 
         DataWriter writer = new DataWriter(request,rootDirName);
 

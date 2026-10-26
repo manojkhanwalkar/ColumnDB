@@ -34,5 +34,5 @@ Dependencies
 2. The client picks up the servers from zookeeper and gets the name , host and port values to connect to.
 
 Security notes
-1. The REST API has no authentication. The sample yml files bind the application and admin connectors to 127.0.0.1 (`bindHost`). Only change `bindHost` to a reachable address on a trusted, firewalled network.
-2. Cluster, database, table and column names may only contain letters, digits, `_` and `-` (max 128 characters), because they are used as directory and file names. Requests with other names, or with a `clusterName` that does not match the server's configured cluster, are rejected with HTTP 400.
+1. The REST API has no authentication. The sample yml files bind the application and admin connectors to 127.0.0.1 (`bindHost`). Only change `bindHost` to a reachable address on a trusted, firewalled network. The node registers itself in ZooKeeper under `messages.advertisedHost` if set, otherwise under `bindHost` (or this machine's host name when `bindHost` is `0.0.0.0`), so set `advertisedHost` to the name other machines should use.
+2. Cluster, database, table and column names may only contain letters, digits, `_` and `-` (max 128 characters), because they are used as directory and file names. Requests with other names, or with a `clusterName` that does not match the server's configured cluster, are rejected with HTTP 400. So are column definitions whose key differs from their `columnName` or whose `maxSize` is outside 1–65536, and batches or queries that name a table or column that doesn't exist.

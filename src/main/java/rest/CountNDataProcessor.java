@@ -97,8 +97,19 @@ public abstract class CountNDataProcessor {
     }
 
 
+    /** @throws IllegalArgumentException if the table or a criteria column doesn't exist */
+    protected void requireKnownColumns() {
+        if (tableMetaData == null)
+            throw new IllegalArgumentException("Unknown table " + dataBaseName + "." + tableName);
+        for (Criteria criteria : request.getCriteriaList()) {
+            if (tableMetaData.getColumnMetaData(criteria.getColumnName()) == null)
+                throw new IllegalArgumentException("Unknown column " + criteria.getColumnName());
+        }
+    }
+
     public Response processCount() {
 
+        requireKnownColumns();
         DBLocks dbLocks = DBLocks.getInstance();
         try {
 

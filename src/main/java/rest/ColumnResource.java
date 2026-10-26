@@ -72,7 +72,7 @@ public class ColumnResource {
     public Response query(@Context HttpServletRequest hsReq, @Valid CountRequest request) {
 
         validate(request);
-        Response metaResponse  = storageManager.processCount(request);
+        Response metaResponse  = badRequestOnUnknown(() -> storageManager.processCount(request));
 
 
 
@@ -87,7 +87,7 @@ public class ColumnResource {
     public DataContainer dataquery(@Context HttpServletRequest hsReq, @Valid CountRequest request) {
 
         validate(request);
-        DataContainer metaResponse  = storageManager.processData(request);
+        DataContainer metaResponse  = badRequestOnUnknown(() -> storageManager.processData(request));
 
 
 
@@ -103,7 +103,10 @@ public class ColumnResource {
 
         validate(request);
 
-        storageManager.write(request);
+        badRequestOnUnknown(() -> {
+            storageManager.write(request);
+            return null;
+        });
 
         return null;
     }
@@ -215,8 +218,11 @@ public class ColumnResource {
                     dbLocks.createLock(databaseName, tableName);
 
                     dbLocks.lock(databaseName,tableName, DBLocks.Type.Write);
-                    storageManager.createTable(databaseName,tableName, tableMetaData);
-                    dbLocks.unlock(databaseName,tableName, DBLocks.Type.Write);
+                    try {
+                        storageManager.createTable(databaseName,tableName, tableMetaData);
+                    } finally {
+                        dbLocks.unlock(databaseName,tableName, DBLocks.Type.Write);
+                    }
                 }
               break ;
             default :
@@ -283,6 +289,8 @@ public class ColumnResource {
         if (request == null || request.getType() == null || request.getMetaData() == null)
             throw badRequest();
         TableMetaData metaData = request.getMetaData();
+        // stored in the table's .meta file and returned by /metaquery
+        checkCluster(metaData.getClusterName());
         checkName(metaData.getDatabaseName());
         switch (request.getType()) {
             case CreateDatabase:
@@ -294,11 +302,27 @@ public class ColumnResource {
             default:
                 checkName(metaData.getTableName());
                 checkColumns(metaData.getColumns());
-                metaData.getColumns().values().forEach(cmd -> {
-                    if (cmd == null)
+                boolean defines = request.getType() != MetaRequestType.DeleteColumn;
+                metaData.getColumns().forEach((key, cmd) -> {
+                    // the storage layer uses the key in some places and the name in others
+                    if (cmd == null || !key.equals(cmd.getColumnName()))
                         throw badRequest();
-                    checkName(cmd.getColumnName());
+                    // queries step through column data in maxSize strides; 0 would loop forever
+                    if (defines && (cmd.getMaxSize() < 1 || cmd.getMaxSize() > MAX_COLUMN_SIZE))
+                        throw badRequest();
                 });
+        }
+    }
+
+    /** Largest fixed width (characters) of one column value. */
+    static final int MAX_COLUMN_SIZE = 65536;
+
+    /** Maps "unknown table or column" from the storage layer to 400 instead of a 500. */
+    private static <T> T badRequestOnUnknown(java.util.function.Supplier<T> call) {
+        try {
+            return call.get();
+        } catch (IllegalArgumentException e) {
+            throw new WebApplicationException(e.getMessage(), javax.ws.rs.core.Response.Status.BAD_REQUEST);
         }
     }
 

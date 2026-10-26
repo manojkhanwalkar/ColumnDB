@@ -19,13 +19,4 @@ public final class NameValidator {
         return name != null && VALID_NAME.matcher(name).matches();
     }
 
-    /**
-     * @throws IllegalArgumentException if the name is not a safe identifier
-     */
-    public static String requireValid(String name, String kind) {
-        if (!isValid(name)) {
-            throw new IllegalArgumentException("Invalid " + kind + " name");
-        }
-        return name;
-    }
 }

@@ -10,6 +10,9 @@ import storage.FileStorageManager;
 import storage.MemoryStorageManager;
 import storage.StorageManager;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 public class ColumnApplication extends Application<ExampleServiceConfiguration> {
 
     StorageManager storageManager;
@@ -39,9 +42,9 @@ public class ColumnApplication extends Application<ExampleServiceConfiguration> 
 
         var factory = ((HttpConnectorFactory) ((DefaultServerFactory)configuration.getServerFactory()).getApplicationConnectors().get(0));
 
-        String host = factory.getBindHost();
-        if (host==null)
-            host="localhost";
+        String host = configuration.getMessages().getAdvertisedHost();
+        if (host == null)
+            host = advertisedHostFor(factory.getBindHost());
 
         int port = factory.getPort();
         
@@ -49,6 +52,21 @@ public class ColumnApplication extends Application<ExampleServiceConfiguration> 
         environment.jersey().register(resource);
         environment.healthChecks().register("APIHealthCheck", new AppHealthCheck());
 
+    }
+
+    /**
+     * The host clients are told to connect to: the bind address itself, or this machine's name when the
+     * connector listens on all interfaces (0.0.0.0 can't be connected to).
+     */
+    static String advertisedHostFor(String bindHost) {
+        if (bindHost == null || bindHost.equals("0.0.0.0") || bindHost.equals("::")) {
+            try {
+                return InetAddress.getLocalHost().getHostName();
+            } catch (UnknownHostException e) {
+                return "localhost";
+            }
+        }
+        return bindHost;
     }
 
 }
