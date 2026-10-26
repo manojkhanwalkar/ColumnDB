@@ -1,7 +1,7 @@
 package person;
 
 import client.ColumnDBClient;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import query.MetaRequest;
 import query.MetaRequestType;
 import query.TableMetaData;

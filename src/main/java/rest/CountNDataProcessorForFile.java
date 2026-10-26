@@ -73,13 +73,17 @@ public class CountNDataProcessorForFile extends CountNDataProcessor {
 
     ObjectMapper mapper = new ObjectMapper();
 
+    /** Releases the column file handles held by this processor's reader pool. */
+    public void close()
+    {
+        pool.close();
+    }
+
 
 
     protected void loadMetaData()
     {
-        try {
-            FileReader reader = new FileReader(rootDirName+seperator+clusterName+seperator+dataBaseName+seperator+tableName+seperator+tableName+".meta");
-            BufferedReader metaFileReader = new BufferedReader(reader);
+        try (BufferedReader metaFileReader = new BufferedReader(new FileReader(rootDirName+seperator+clusterName+seperator+dataBaseName+seperator+tableName+seperator+tableName+".meta"))) {
             String s = metaFileReader.readLine();
 
             tableMetaData = mapper.readValue(s, TableMetaData.class);

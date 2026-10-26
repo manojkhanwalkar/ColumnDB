@@ -78,7 +78,11 @@ public class FileStorageManager implements StorageManager {
     public Response processCount(CountRequest request) {
         CountNDataProcessorForFile processor = new CountNDataProcessorForFile(request,this);
 
-        return processor.processCount();
+        try {
+            return processor.processCount();
+        } finally {
+            processor.close();
+        }
     }
 
     @Override
@@ -86,7 +90,11 @@ public class FileStorageManager implements StorageManager {
 
         CountNDataProcessorForFile processor = new CountNDataProcessorForFile(request,this);
 
-        return processor.processData();
+        try {
+            return processor.processData();
+        } finally {
+            processor.close();
+        }
 
     }
 
@@ -379,9 +387,7 @@ public class FileStorageManager implements StorageManager {
             dbLocks.lock(databaseMD.getName(), table.getName(), DBLocks.Type.Read);
 
             TableMetaData tableMetaData = null;
-            try {
-                FileReader reader = new FileReader(rootDirName + seperator + clusterName + seperator + databaseMD.getName() + seperator + table.getName() + seperator + table.getName() + ".meta");
-                BufferedReader metaFileReader = new BufferedReader(reader);
+            try (BufferedReader metaFileReader = new BufferedReader(new FileReader(rootDirName + seperator + clusterName + seperator + databaseMD.getName() + seperator + table.getName() + seperator + table.getName() + ".meta"))) {
                 String s = metaFileReader.readLine();
 
                 tableMetaData = mapper.readValue(s, TableMetaData.class);

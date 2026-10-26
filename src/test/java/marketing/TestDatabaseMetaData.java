@@ -1,7 +1,7 @@
 package marketing;
 
 import client.ColumnDBClient;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import person.DeleteDatabase;
 import query.ColumnMetaData;

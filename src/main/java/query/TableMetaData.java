@@ -57,10 +57,7 @@ public class TableMetaData {
 
     public static TableMetaData fromJSONString(String str)
     {
-        try {
-            //  FileReader reader = new FileReader(rootDirName+seperator+clusterName+seperator+dataBaseName+seperator+tableName+seperator+tableName+".meta");
-
-            BufferedReader metaFileReader = new BufferedReader(new FileReader(str));
+        try (BufferedReader metaFileReader = new BufferedReader(new FileReader(str))) {
             String s = metaFileReader.readLine();
 
             return mapper.readValue(s, TableMetaData.class);
